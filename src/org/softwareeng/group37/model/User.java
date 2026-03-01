@@ -1,6 +1,8 @@
 package org.softwareeng.group37.model;
 
-public class User  extends Entity{
+import java.lang.reflect.Field;
+
+public class User extends Entity {
     private String username;
     private String password;
 
@@ -19,10 +21,6 @@ public class User  extends Entity{
     public void setPassword(String password) {
         this.password = password;
     }
-
-//    public String toWrite() {
-//        return getId() + "," + username + "," + password + ","+ getStatus() +"\n";
-//    }
 
 
 

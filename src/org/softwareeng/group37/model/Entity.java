@@ -9,7 +9,6 @@ import static org.softwareeng.group37.contants.Contants.*;
 
 public abstract class Entity {
 
-    private final static String TAG = Entity.class.getSimpleName();
 
     private int id;
     /**
@@ -22,7 +21,6 @@ public abstract class Entity {
 
     public String toWrite() {
         if (id == -1) {
-            System.out.println(";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;");
             return getHeader();
         }
         Field[] fields = this.getClass().getDeclaredFields();
@@ -49,10 +47,8 @@ public abstract class Entity {
         Class<?> current = this.getClass();
         while (current != null && current != Object.class) {
             Field[] fields = current.getDeclaredFields();
-            LogUtils.DEBUG(TAG, "getHeader " + current.getName());
             StringBuilder classFieldName = new StringBuilder();
             for (Field field : fields) {
-                LogUtils.DEBUG(TAG, "ENTITY field      " + field.getName());
                 classFieldName.append(field.getName()).append(",");
             }
             current = current.getSuperclass();

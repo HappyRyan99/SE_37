@@ -22,7 +22,7 @@ public class MainController {
             MENU("Main Menu");
             MENU("1. REGISTER NEW USER");
             MENU("2. LOGOUT");
-            MENU("3. EXIT");
+            MENU("-1. EXIT");
             java.util.Scanner scanner = new java.util.Scanner(System.in);
             int choice;
             while (true) {
@@ -33,6 +33,16 @@ public class MainController {
                 } catch (NumberFormatException e) {
                     System.out.println("Invalid input. Please enter a valid integer.");
                 }
+            }
+
+            switch (choice) {
+                case 1:
+                    loginController.register();
+                    break;
+                case -1:
+                    INFO("APP","Exiting...");
+                    System.exit(0);
+                    break;
             }
 
         }

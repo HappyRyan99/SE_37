@@ -10,7 +10,6 @@ import static org.softwareeng.group37.utils.LogUtils.USERINPUT;
 
 public class SkillController extends BaseController {
 
-
     private final static String SKILLS_FILE = "skills.csv";
 
     public SkillController() {

@@ -11,8 +11,8 @@ public class BaseController<T> {
     protected EntityDao<?> baseDao;
     java.util.Scanner scanner = new java.util.Scanner(System.in);
 
-    protected BaseController(String fileName, T t) {
-        baseDao = new EntityDao<T>(fileName, t.getClass());
+    protected BaseController(String fileName, Class clazz) {
+        baseDao = new EntityDao<T>(fileName, clazz);
     }
 
 }

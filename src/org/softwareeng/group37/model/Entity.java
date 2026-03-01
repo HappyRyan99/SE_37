@@ -9,8 +9,6 @@ import static org.softwareeng.group37.contants.Contants.*;
 
 public abstract class Entity {
 
-    private final static String LOG_TAG = Entity.class.getSimpleName();
-
     private int id;
     /**
      * statu = 0  DEFAUL
@@ -48,10 +46,8 @@ public abstract class Entity {
         Class<?> current = this.getClass();
         while (current != null && current != Object.class) {
             Field[] fields = current.getDeclaredFields();
-            LogUtils.DEBUG(LOG_TAG, "getHeader " + current.getName());
             StringBuilder classFieldName = new StringBuilder();
             for (Field field : fields) {
-                LogUtils.DEBUG(LOG_TAG, "ENTITY field      " + field.getName());
                 classFieldName.append(field.getName()).append(",");
             }
             current = current.getSuperclass();

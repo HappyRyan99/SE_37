@@ -9,6 +9,8 @@ import static org.softwareeng.group37.contants.Contants.*;
 
 public abstract class Entity {
 
+    private final static String TAG = Entity.class.getSimpleName();
+
     private int id;
     /**
      * statu = 0  DEFAUL
@@ -43,18 +45,25 @@ public abstract class Entity {
     }
 
     public String getHeader() {
-        Field[] fields = this.getClass().getDeclaredFields();
         StringBuilder output = new StringBuilder();
-
-            Class<?> current = this.getClass();
-            while (current != null && current != Object.class) {
-                System.out.println("asdddddddffffffffffffffffffffffffffffffffffffff"+ current.getName());
-                for (Field field : fields) {
-                    System.out.println("ENTITY field      "+ field.getName());
-                    output.append(field.getName()).append(",");
-                }
-                current = current.getSuperclass();
+        Class<?> current = this.getClass();
+        while (current != null && current != Object.class) {
+            Field[] fields = current.getDeclaredFields();
+            LogUtils.DEBUG(TAG, "getHeader " + current.getName());
+            StringBuilder classFieldName = new StringBuilder();
+            for (Field field : fields) {
+                LogUtils.DEBUG(TAG, "ENTITY field      " + field.getName());
+                classFieldName.append(field.getName()).append(",");
             }
+            current = current.getSuperclass();
+            if (null != current) {
+                output = new StringBuilder(classFieldName.append(output));
+            } else {
+                output = new StringBuilder(classFieldName.toString());
+            }
+        }
+
+
         if (output.toString().endsWith(",")) {
             output.deleteCharAt(output.length() - 1);
         }

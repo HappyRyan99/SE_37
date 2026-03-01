@@ -1,5 +1,7 @@
 package org.softwareeng.group37.model;
 
+import org.softwareeng.group37.utils.LogUtils;
+
 import java.lang.reflect.Field;
 
 public abstract class Entity {
@@ -40,14 +42,13 @@ public abstract class Entity {
             try {
                 output.append(field.getName()).append(",").append(field.get(this));
             } catch (IllegalAccessException e) {
-                System.out.println("Error accessing field: " + field.getName());
-                output.append(field.getName()).append(",").append(field.get(this));
+                LogUtils.ERROR(getClass().getName(), "Error accessing field: ", e);
             }
-            String name = field.getName();
-            Object value = field.get(obj);
-            System.out.println(name + ": " + value);
+//            String name = field.getName();
+//            Object value = field.get(obj);
+//            System.out.println(name + ": " + value);
 
         }
-        return output;
+        return output.toString();
     }
 }

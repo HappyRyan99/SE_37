@@ -1,7 +1,6 @@
 package org.softwareeng.group37.controller;
 
 import org.softwareeng.group37.dao.EntityDao;
-import org.softwareeng.group37.model.Skills;
 
 public class BaseController<T> {
 

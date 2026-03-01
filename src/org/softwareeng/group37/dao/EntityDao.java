@@ -33,11 +33,16 @@ public class EntityDao<T> extends CSVReadWriter<T> {
 
     @Override
     public boolean write(T data) {
-        boolean result = FileUtils.fileWrite(mFileName, data);
-        if (result) {
-            dataMap.put(((Entity) data).getId(), data);
+        if (data instanceof Entity) {
+            boolean result = FileUtils.fileWriteString(mFileName, ((Entity) data).toWrite());
+            if (result) {
+                dataMap.put(((Entity) data).getId(), data);
+            }
+            return result;
+        } else {
+            return false;
         }
-        return result;
+
     }
 
     @Override
@@ -124,7 +129,7 @@ public class EntityDao<T> extends CSVReadWriter<T> {
                         field.setAccessible(true);
                         // skip null values
                         System.out.println(field.get(o));
-                        if (o ==null || field.get(o) == null) continue;
+                        if (o == null || field.get(o) == null) continue;
                         if (field.get(o).toString().equalsIgnoreCase(value)) {
                             result.add(o);
                         }
@@ -151,7 +156,7 @@ public class EntityDao<T> extends CSVReadWriter<T> {
 
     public int getANewId() {
         synchronized (Entity.class) {
-            int value = dataMap.size()+1;
+            int value = dataMap.size() + 1;
             return (value);
         }
     }

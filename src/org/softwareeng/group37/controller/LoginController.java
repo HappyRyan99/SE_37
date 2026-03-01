@@ -103,6 +103,20 @@ public class LoginController {
 
         return USER_DAO.write(user);
     }
+    
+    public void listUsers() {
+        List<User> users = USER_DAO.readAll();
+        SUCCESS("Number of users: " + users.size());
+        // Using ANSI color codes to enhance the output
+        String colorUsername = "\u001B[34m"; // Blue for username
+        String colorId = "\u001B[32m"; // Green for ID
+        String colorReset = "\u001B[0m"; // Reset color after printing
+
+        for (User user : users) {
+            System.out.println(colorUsername + "Username: " + user.getUsername() +
+                    colorReset + " , " + colorId + "ID: " + user.getId() + colorReset);
+        }
+    }
 
     private String encryptPassword(String password) {
         try {

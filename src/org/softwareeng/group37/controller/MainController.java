@@ -19,8 +19,12 @@ public class MainController {
             }
         }
         while (true) {
-            MENU("HOME MENU");
-            MENU(" 1. REGISTER NEW USER");
+            MENU("=========================== HOME MENU ===================================\n");
+            MENU("====USER MENU===\n");
+            MENU(" 1. REGISTER NEW USER\t");
+            MENU(" 2. LIST USERS\t");
+            MENU("\n");
+            MENU("==================== QUIT =================================================\n");
             MENU(" -2. LOGOUT");
             MENU("-1. EXIT");
             java.util.Scanner scanner = new java.util.Scanner(System.in);
@@ -38,6 +42,9 @@ public class MainController {
             switch (choice) {
                 case 1:
                     loginController.register();
+                    break;
+                case 2:
+                    loginController.listUsers();
                     break;
                 case -2:
                     INFO("APP","Logging out...");

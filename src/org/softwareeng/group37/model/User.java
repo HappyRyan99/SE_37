@@ -21,7 +21,7 @@ public class User  extends Entity{
     }
     @Override
     public String toWrite() {
-        return getId() + "," + username + "," + password + ","+  +"\n   ";
+        return getId() + "," + username + "," + password + ","+ getStatus() +"\n";
     }
 
 

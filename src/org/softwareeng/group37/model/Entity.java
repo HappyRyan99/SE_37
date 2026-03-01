@@ -37,18 +37,16 @@ public abstract class Entity {
 
     public String toString() {
         Field[] fields = this.getClass().getDeclaredFields();
-        StringBuffer output = new StringBuffer();
+        StringBuilder output = new StringBuilder();
         for (Field field : fields) {
             try {
                 output.append(field.getName()).append(",").append(field.get(this));
             } catch (IllegalAccessException e) {
+                output.append(field.getName()).append(",").append("NA");
                 LogUtils.ERROR(getClass().getName(), "Error accessing field: ", e);
             }
-//            String name = field.getName();
-//            Object value = field.get(obj);
-//            System.out.println(name + ": " + value);
-
         }
+        output.append("\n");
         return output.toString();
     }
 }

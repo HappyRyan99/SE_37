@@ -14,7 +14,7 @@ public abstract class CSVReadWriter<T> {
 
     public CSVReadWriter(Class<?> type) {
         this.mType = type;
-        mFields = new ArrayList<>();
+    mFields = new ArrayList<>();
         setFields();
     }
 
@@ -48,27 +48,9 @@ public abstract class CSVReadWriter<T> {
      *
      * @param field the field to search by
      * @param value the value to match in the specified field
-     * @return an Optional containing the data if a matching record is found, or an empty Optional if not
+     * @return an List containing the data if a matching record is found, or an empty Optional if not
      */
-    public Optional<T> readByField(String fieldName, String value) {
-        //check if field is valid
-        for (Field field : mFields) {
-            try {
-                if (field.getName().equalsIgnoreCase(fieldName)) {
-                    for (T o : dataMap.values()) {
-                        field.setAccessible(true);
-                        if (field.get(o).toString().equalsIgnoreCase(value)) {
-                            return Optional.of(o);
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                LogUtils.ERROR(getClass().getName(), "Error accessing field: ", e);
-                return Optional.empty();
-            }
-        }
-        return Optional.empty();
-    }
+    public abstract List<T> readByField(String fieldName, String value);
 
     /**
      * Reads all data from the CSV file.

@@ -3,12 +3,38 @@ package org.softwareeng.group37.controller;
 import org.softwareeng.group37.utils.LogUtils;
 import org.softwareeng.group37.utils.Utils;
 
+import static org.softwareeng.group37.utils.LogUtils.INFO;
+import static org.softwareeng.group37.utils.LogUtils.MENU;
+
 public class MainController {
     public static void main(String[] args) {
         LoginController loginController = new LoginController();
-        LogUtils.changeOutputColor("BLUE"); // Set the output color to blue
+        LogUtils.changeOutputColor("GREEN"); // Set the output color to blue
 
-        System.out.println("Welcome to the Part time Teacher Management System");
-        LogUtils.resetOutputColor(); // Reset the color after printing
+        INFO("APP","Welcome to the Part time Teacher Management System");
+        LogUtils.changeOutputColor("BLUE");
+        while (true) {
+            if (loginController.login()) {
+                break;
+            }
+        }
+        while (true) {
+            MENU("Main Menu");
+            MENU("1. REGISTER NEW USER");
+            MENU("2. LOGOUT");
+            MENU("3. EXIT");
+            java.util.Scanner scanner = new java.util.Scanner(System.in);
+            int choice;
+            while (true) {
+                try {
+                    System.out.print("Enter your choice: ");
+                    choice = Integer.parseInt(scanner.nextLine());
+                    break;
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input. Please enter a valid integer.");
+                }
+            }
+
+        }
     }
 }

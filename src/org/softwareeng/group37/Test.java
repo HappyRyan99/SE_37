@@ -14,7 +14,6 @@ import java.util.Optional;
 public class Test {
 
     public static void main(String[] args) {
-        Utils.printScreen("Utils.generateNewUserId()" + Utils.generateNewUserId());
     }
 
 
@@ -38,7 +37,7 @@ public class Test {
 //        System.out.println(user.getHeader());
 //        System.out.println(user.toWrite());
 
-        EntityDao entityDao = new EntityDao("users.csv", User.class);
+        EntityDao entityDao = new EntityDao("users_test.csv", User.class);
         List<User> userList = entityDao.readAll();
         System.out.println("==========userlist size" + userList.size());
 //        entityDao.write(user);

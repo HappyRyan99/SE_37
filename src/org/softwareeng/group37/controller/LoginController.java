@@ -1,65 +1,92 @@
 package org.softwareeng.group37.controller;
 
 import org.softwareeng.group37.dao.EntityDao;
+import org.softwareeng.group37.model.Entity;
 import org.softwareeng.group37.model.User;
 import org.softwareeng.group37.utils.LogUtils;
 import org.softwareeng.group37.utils.Utils;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Random;
+import java.util.List;
+
+import static org.softwareeng.group37.utils.LogUtils.*;
 
 public class LoginController {
     private final EntityDao<User> USER_DAO;
     private final String USER_FILE = "users.csv";
-    public static  User LOGIN_USER;
+    public static User LOGIN_USER;
 
     public LoginController() {
         USER_DAO = new EntityDao<>(USER_FILE, User.class);
     }
 
-    public boolean login(){
+    public boolean login() {
+        if (!hasUsers()) {
+            WARNING( "LOGIN","No users found. Please register first.");
+            return register();
+        }
         java.util.Scanner scanner = new java.util.Scanner(System.in);
-        Utils.printScreen( "Welcome to the LOGIN Interface");
-        Utils.printScreen("Enter username: ");
+        INFO( "LOGIN","Welcome to the LOGIN Interface");
+        USERINPUT("Enter username: ");
         String username = scanner.nextLine();
 
-        Utils.printScreen("Enter password: ");
+        USERINPUT("Enter password: ");
         String password = scanner.nextLine();
 
         return login(username, password);
     }
-    
-    private boolean login(String username, String password) {
-        return USER_DAO.readAll().stream()
-                .filter(user -> user.getUsername().equals(username)
-                        && user.getPassword().equals(encryptPassword(password)))
-                .findFirst()
-                .map(authenticatedUser -> {
-                    LOGIN_USER = authenticatedUser;
-                    LogUtils.DEBUG(getClass().getName(), "User logged in successfully: " + authenticatedUser.getUsername());
-                    return true;
-                })
-                .orElse(false);
+
+    private boolean hasUsers() {
+        List<User> users = USER_DAO.readAll();
+        INFO( "LOGIN","Number of users: " + users.size());
+        for (User user : users) {
+            INFO( "LOGIN","User: " + user.getUsername() + " ID: " + user.getId());
+        }
+        return !users.isEmpty();
     }
+
+    private boolean login(String username, String password) {
+            List<User> users = USER_DAO.readByField("username", username);
+            if (users.isEmpty()) {
+                WARNING( "LOGIN","User not found");
+                return false;
+            }
+            for (User user : users) {
+                if (user.getPassword().equals(encryptPassword(password))) {
+                    LOGIN_USER = user;
+                    LogUtils.SUCCESS( "User logged in successfully: " + user.getUsername());
+                    return true;
+                }
+            }
+            return false;
+    }
+
 
     public boolean register() {
         java.util.Scanner scanner = new java.util.Scanner(System.in);
-        System.out.println( "Welcome to the REGISTER Interface");
-        System.out.print("Enter username: ");
+        INFO("LOGIN", "Welcome to the REGISTER Interface");
+        USERINPUT("Enter username: ");
         String username = scanner.nextLine();
-        System.out.println( "Enter password: ");
+        USERINPUT("Enter password: ");
         String password = scanner.nextLine();
         if (username.isEmpty() || password.isEmpty()) {
-            LogUtils.DEBUG(getClass().getName(), "Username or password cannot be empty");
+            LogUtils.WARNING(getClass().getName(), "Username or password cannot be empty");
             return false;
         }
         User user = new User();
-        user.setId(Utils.generateNewUserId());
+        user.setId(USER_DAO.getANewId());
         user.setUsername(username);
         user.setPassword(password);
-        return register(user);
+        LOGIN_USER = user;
+        boolean res = register(user);
+        if (res){
+            LogUtils.SUCCESS( "User registered successfully: " + user.getUsername());
+            return true;
+        }
+        return false;
     }
+
     public boolean register(User user) {
         user.setPassword(encryptPassword(user.getPassword()));
 

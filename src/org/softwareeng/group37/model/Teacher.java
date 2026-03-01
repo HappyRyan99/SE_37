@@ -1,6 +1,10 @@
 package org.softwareeng.group37.model;
 
-public class Teacher extends Entity{
+import org.softwareeng.group37.utils.LogUtils;
+
+import java.lang.reflect.Field;
+
+public class Teacher extends Entity {
 
 
     private String name;
@@ -22,9 +26,10 @@ public class Teacher extends Entity{
         this.regDate = regDate;
     }
 
-    @Override
-    public String toWrite() {
-        return "";
-    }
-
+//
+//    @Override
+//    public String toWrite() {
+//        String te = toWriteId() + super.toWrite();
+//        return te;
+//    }
 }

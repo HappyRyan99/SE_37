@@ -3,13 +3,16 @@ package org.softwareeng.group37.dao;
 
 import org.softwareeng.group37.model.Entity;
 import org.softwareeng.group37.utils.LogUtils;
+import org.softwareeng.group37.utils.Utils;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,14 +34,26 @@ public class EntityDao<T> extends CSVReadWriter<T> {
 
     @Override
     public boolean write(T data) {
-        return false;
+        try (java.io.FileWriter fw = new java.io.FileWriter(mFileName, true)) {
+            if (data instanceof Entity) {
+                String csvLine = ((Entity) data).toWrite();
+                fw.append(csvLine);
+                dataMap.put(((Entity) data).getId(), data);
+                return true;
+            } else {
+                LogUtils.WARNING(getClass().getSimpleName(), "Data is not an instance of Entity.");
+                return false;
+            }
+        } catch (IOException e) {
+            LogUtils.ERROR(getClass().getSimpleName(), "Failed to write data to file: " + mFileName, e);
+            return false;
+        }
     }
 
     @Override
     public Optional<T> read(int id) {
         // Check if the field is valid
         LogUtils.DEBUG(getClass().getSimpleName(), "=======dataMap==========" + dataMap.size());
-        System.out.println(dataMap);
         for (Field field : mFields) {
             LogUtils.DEBUG(getClass().getSimpleName(), "=======field.getName()==========" + field.getName());
             try {
@@ -60,12 +75,20 @@ public class EntityDao<T> extends CSVReadWriter<T> {
 
     @Override
     public List<T> readAll() {
+        File datafile = new File(mFileName);
+        if (!datafile.exists()) {
+            try {
+                datafile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         try (BufferedReader br = new BufferedReader(new FileReader(mFileName))) {
             String line;
             List<String> csvHeader = new ArrayList<>();
             while ((line = br.readLine()) != null) {
                 System.out.println("[" + line + "]");
-                if (csvHeader.isEmpty()) {
+                if (csvHeader.contains("id,status,")) {
                     csvHeader.addAll(List.of(line.split(",")));
                     continue;
                 }
@@ -86,36 +109,54 @@ public class EntityDao<T> extends CSVReadWriter<T> {
                 }
                 dataMap.put(((Entity) entity).getId(), entity);
             }
-        } catch (IOException e) {
-            LogUtils.ERROR(getClass().getSimpleName(), "Error reading file: ", e);
-            initData();
+            if (dataMap.isEmpty()) {
+                System.out.println("No users found in the database. initializing data...");
+//                initData();
+            }
             return dataMap.values().stream().toList();
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            LogUtils.ERROR(getClass().getSimpleName(), "Error reading file: ", e);
+            return dataMap.values().stream().toList();
         }
-        if (dataMap.isEmpty()) {
-            System.out.println("No users found in the database. initializing data...");
-            initData();
-        }
-        return dataMap.values().stream().toList();
     }
 
-    private void initData() {
-//        T user = new T();
-//        user.setId(-1);
-//        dataMap.put(-1, user);
-        System.out.println("init data");
+    public List<T> readByField(String fieldName, String value) {
+        //check if field is valid
+        List<T> result = new ArrayList<>();
+        for (Field field : mFields) {
+            try {
+                if (field.getName().equalsIgnoreCase(fieldName)) {
+                    for (T o : dataMap.values()) {
+                        field.setAccessible(true);
+                        if (field.get(o).toString().equalsIgnoreCase(value)) {
+                            result.add(o);
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                LogUtils.ERROR(getClass().getName(), "Error accessing field: ", e);
+            }
+        }
+        return result;
     }
+
+    private void initData() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        Entity entity = (Entity) mType.getDeclaredConstructor().newInstance();
+        entity.setId(-1);
+        dataMap.put(-1, (T) entity);
+        write((T) entity);
+        LogUtils.DEBUG(getClass().getSimpleName(), "init data");
+    }
+
     public List<Integer> getAllId() {
         return dataMap.keySet().stream().toList();
     }
 
-
+    public int getANewId() {
+        synchronized (Entity.class) {
+            int value = dataMap.size();
+            return (value);
+        }
+    }
 
 }

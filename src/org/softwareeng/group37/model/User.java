@@ -19,7 +19,7 @@ public class User  extends Entity{
     public void setPassword(String password) {
         this.password = password;
     }
-    @Override
+
     public String toWrite() {
         return getId() + "," + username + "," + password + ","+ getStatus() +"\n";
     }

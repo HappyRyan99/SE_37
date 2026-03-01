@@ -134,6 +134,7 @@ public class EntityDao<T> extends CSVReadWriter<T> {
                         Entity entity = (Entity) o;
                         field.setAccessible(true);
                         // skip null values
+                        System.out.println(field.get(o));
                         if (o ==null || field.get(o) == null) continue;
                         if (field.get(o).toString().equalsIgnoreCase(value)) {
                             result.add(o);
@@ -161,7 +162,7 @@ public class EntityDao<T> extends CSVReadWriter<T> {
 
     public int getANewId() {
         synchronized (Entity.class) {
-            int value = dataMap.size();
+            int value = dataMap.size()+1;
             return (value);
         }
     }

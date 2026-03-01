@@ -21,8 +21,12 @@ public abstract class CSVReadWriter<T> {
     private   void setFields() {
         Class<?> current = mType;
         while (current != null && current != Object.class) {
+            System.out.println("CSRV     asdddddddffffffffffffffffffffffffffffffffffffff"+ current.getName());
             Collections.addAll(mFields, current.getDeclaredFields());
             current = current.getSuperclass();
+        }
+        for (Field field : mFields) {
+            System.out.println("CSV     field      "+ field.getName());
         }
     }
 

@@ -60,6 +60,16 @@ public class LoginController {
                 }
             }
             return false;
+//        return USER_DAO.readAll().stream()
+//                .filter(user -> user.getUsername().equals(username)
+//                        && user.getPassword().equals(encryptPassword(password)))
+//                .findFirst()
+//                .map(authenticatedUser -> {
+//                    LOGIN_USER = authenticatedUser;
+//                    LogUtils.WARNING(getClass().getName(), "User logged in successfully: " + authenticatedUser.getUsername());
+//                    return true;
+//                })
+//                .orElse(false);
     }
 
 

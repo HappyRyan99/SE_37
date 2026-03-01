@@ -3,6 +3,7 @@ package org.softwareeng.group37.model;
 import org.softwareeng.group37.utils.LogUtils;
 
 import java.lang.reflect.Field;
+import java.util.Collections;
 
 import static org.softwareeng.group37.contants.Contants.*;
 
@@ -19,6 +20,7 @@ public abstract class Entity {
 
     public String toWrite() {
         if (id == -1) {
+            System.out.println(";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;");
             return getHeader();
         }
         Field[] fields = this.getClass().getDeclaredFields();
@@ -43,11 +45,16 @@ public abstract class Entity {
     public String getHeader() {
         Field[] fields = this.getClass().getDeclaredFields();
         StringBuilder output = new StringBuilder();
-        output.append("ID,Status,");
-        for (Field field : fields) {
-            field.setAccessible(true);
-            output.append(field.getName()).append(",");
-        }
+
+            Class<?> current = this.getClass();
+            while (current != null && current != Object.class) {
+                System.out.println("asdddddddffffffffffffffffffffffffffffffffffffff"+ current.getName());
+                for (Field field : fields) {
+                    System.out.println("ENTITY field      "+ field.getName());
+                    output.append(field.getName()).append(",");
+                }
+                current = current.getSuperclass();
+            }
         if (output.toString().endsWith(",")) {
             output.deleteCharAt(output.length() - 1);
         }

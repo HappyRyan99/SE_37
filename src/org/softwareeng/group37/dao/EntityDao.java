@@ -92,7 +92,7 @@ public class EntityDao<T> extends CSVReadWriter<T> {
                     csvHeader.addAll(List.of(line.split(",")));
                     continue;
                 }
-                T entity = (T) mType.getDeclaredConstructor().newInstance();
+                Entity entity = (Entity) mType.getDeclaredConstructor().newInstance();
                 String[] values = line.split(",");
                 LogUtils.DEBUG(getClass().getSimpleName(), String.format("ID STATUS ======> %s %s", values[0], values[1]));
                 for (Field field : mFields) {
@@ -106,12 +106,13 @@ public class EntityDao<T> extends CSVReadWriter<T> {
                             field.set(entity, values[index]);
                         }
                     }
+                    System.out.println("updated entitty : " + entity.toWrite());
                 }
-                dataMap.put(((Entity) entity).getId(), entity);
+                dataMap.put(((Entity) entity).getId(), (T) entity);
             }
             if (dataMap.isEmpty()) {
                 System.out.println("No users found in the database. initializing data...");
-//                initData();
+                initData();
             }
             return dataMap.values().stream().toList();
         } catch (Exception e) {
@@ -126,9 +127,21 @@ public class EntityDao<T> extends CSVReadWriter<T> {
         for (Field field : mFields) {
             try {
                 if (field.getName().equalsIgnoreCase(fieldName)) {
+                     List<T> objs = readAll();
+                    for (T o : objs) {
+                        Entity entity = (Entity) o;
+                        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!:    " + entity.toWrite());
+                    }
                     for (T o : dataMap.values()) {
+                        Entity entity = (Entity) o;
+                        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!sddadadad:    " + entity.toWrite());
                         field.setAccessible(true);
+                        // skip null values
+                        if (o ==null || field.get(o) == null) continue;
+                        Object fieldValue = field.get(o);
+                        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!sddadadad:    " + fieldValue);
                         if (field.get(o).toString().equalsIgnoreCase(value)) {
+                            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!sddadadad");
                             result.add(o);
                         }
                     }

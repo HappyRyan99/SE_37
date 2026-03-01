@@ -20,9 +20,9 @@ public class User  extends Entity{
         this.password = password;
     }
 
-    public String toWrite() {
-        return getId() + "," + username + "," + password + ","+ getStatus() +"\n";
-    }
+//    public String toWrite() {
+//        return getId() + "," + username + "," + password + ","+ getStatus() +"\n";
+//    }
 
 
 

@@ -3,13 +3,12 @@ package org.softwareeng.group37.model;
 import org.softwareeng.group37.utils.LogUtils;
 
 import java.lang.reflect.Field;
-import java.util.Collections;
 
 import static org.softwareeng.group37.contants.Contants.*;
 
 public abstract class Entity {
 
-    private final static String TAG = Entity.class.getSimpleName();
+    private final static String LOG_TAG = Entity.class.getSimpleName();
 
     private int id;
     /**
@@ -49,10 +48,10 @@ public abstract class Entity {
         Class<?> current = this.getClass();
         while (current != null && current != Object.class) {
             Field[] fields = current.getDeclaredFields();
-            LogUtils.DEBUG(TAG, "getHeader " + current.getName());
+            LogUtils.DEBUG(LOG_TAG, "getHeader " + current.getName());
             StringBuilder classFieldName = new StringBuilder();
             for (Field field : fields) {
-                LogUtils.DEBUG(TAG, "ENTITY field      " + field.getName());
+                LogUtils.DEBUG(LOG_TAG, "ENTITY field      " + field.getName());
                 classFieldName.append(field.getName()).append(",");
             }
             current = current.getSuperclass();

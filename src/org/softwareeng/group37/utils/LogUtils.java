@@ -54,7 +54,7 @@ public class LogUtils {
     public static void MENU(String message) {
         
         changeOutputColor("CYAN");
-        System.out.print("\033[1m" + message + RESET);
+        System.out.println("\033[1m" + message + RESET);
     }
 
 

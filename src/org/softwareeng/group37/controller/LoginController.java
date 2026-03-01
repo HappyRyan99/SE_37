@@ -39,11 +39,11 @@ public class LoginController {
 
     private boolean hasUsers() {
         List<User> users = USER_DAO.readAll();
-        INFO( "LOGIN","Number of users: " + users.size());
+        DEBUG( "LOGIN","Number of users: " + users.size());
         for (User user : users) {
-            INFO( "LOGIN","User: " + user.getUsername() + " ID: " + user.getId());
+            DEBUG( "LOGIN","User: " + user.getUsername() + " ID: " + user.getId());
         }
-        return !users.isEmpty();
+        return users.size() > 0;
     }
 
     private boolean login(String username, String password) {
@@ -59,6 +59,7 @@ public class LoginController {
                     return true;
                 }
             }
+            WARNING( "LOGIN","Incorrect username or password");
             return false;
 //        return USER_DAO.readAll().stream()
 //                .filter(user -> user.getUsername().equals(username)

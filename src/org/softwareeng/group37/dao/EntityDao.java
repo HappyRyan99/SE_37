@@ -77,18 +77,21 @@ public class EntityDao<T> extends CSVReadWriter<T> {
             String line;
             List<String> csvHeader = new ArrayList<>();
             while ((line = br.readLine()) != null) {
-                System.out.println("[" + line + "]");
-                if (csvHeader.contains("id,status,")) {
+                if (line.startsWith("id")) {
                     csvHeader.addAll(List.of(line.split(",")));
                     continue;
                 }
                 Entity entity = (Entity) mType.getDeclaredConstructor().newInstance();
                 String[] values = line.split(",");
-                LogUtils.DEBUG(getClass().getSimpleName(), String.format("ID STATUS ======> %s %s", values[0], values[1]));
                 for (Field field : mFields) {
-                    int index = csvHeader.indexOf(field.getName());
+                    int index = 0;
+                    for (String header : csvHeader) {
+                        if (header.equalsIgnoreCase(field.getName())) {
+                            break;
+                        }
+                        index++;
+                    }
                     if (index != -1 && index < values.length) {
-                        LogUtils.DEBUG(getClass().getSimpleName(), index + "============" + field.getName() + "==========" + values[index]);
                         field.setAccessible(true);
                         if (field.getType().equals(int.class)) {
                             field.set(entity, Integer.parseInt(values[index].trim()));
@@ -96,7 +99,6 @@ public class EntityDao<T> extends CSVReadWriter<T> {
                             field.set(entity, values[index]);
                         }
                     }
-                    System.out.println("updated entitty : " + entity.toWrite());
                 }
                 dataMap.put(((Entity) entity).getId(), (T) entity);
             }
@@ -117,21 +119,13 @@ public class EntityDao<T> extends CSVReadWriter<T> {
         for (Field field : mFields) {
             try {
                 if (field.getName().equalsIgnoreCase(fieldName)) {
-                    List<T> objs = readAll();
-                    for (T o : objs) {
-                        Entity entity = (Entity) o;
-                        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!:    " + entity.toWrite());
-                    }
                     for (T o : dataMap.values()) {
                         Entity entity = (Entity) o;
-                        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!sddadadad:    " + entity.toWrite());
                         field.setAccessible(true);
                         // skip null values
-                        if (o == null || field.get(o) == null) continue;
-                        Object fieldValue = field.get(o);
-                        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!sddadadad:    " + fieldValue);
+                        System.out.println(field.get(o));
+                        if (o ==null || field.get(o) == null) continue;
                         if (field.get(o).toString().equalsIgnoreCase(value)) {
-                            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!sddadadad");
                             result.add(o);
                         }
                     }
@@ -157,7 +151,7 @@ public class EntityDao<T> extends CSVReadWriter<T> {
 
     public int getANewId() {
         synchronized (Entity.class) {
-            int value = dataMap.size();
+            int value = dataMap.size()+1;
             return (value);
         }
     }

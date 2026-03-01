@@ -2,8 +2,8 @@ package org.softwareeng.group37.dao;
 
 
 import org.softwareeng.group37.model.Entity;
+import org.softwareeng.group37.utils.FileUtils;
 import org.softwareeng.group37.utils.LogUtils;
-import org.softwareeng.group37.utils.Utils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,20 +33,11 @@ public class EntityDao<T> extends CSVReadWriter<T> {
 
     @Override
     public boolean write(T data) {
-        try (java.io.FileWriter fw = new java.io.FileWriter(mFileName, true)) {
-            if (data instanceof Entity) {
-                String csvLine = ((Entity) data).toWrite();
-                fw.append(csvLine);
-                dataMap.put(((Entity) data).getId(), data);
-                return true;
-            } else {
-                LogUtils.WARNING(getClass().getSimpleName(), "Data is not an instance of Entity.");
-                return false;
-            }
-        } catch (IOException e) {
-            LogUtils.ERROR(getClass().getSimpleName(), "Failed to write data to file: " + mFileName, e);
-            return false;
+        boolean result = FileUtils.fileWrite(mFileName, data);
+        if (result) {
+            dataMap.put(((Entity) data).getId(), data);
         }
+        return result;
     }
 
     @Override
@@ -116,7 +106,7 @@ public class EntityDao<T> extends CSVReadWriter<T> {
             }
             return dataMap.values().stream().toList();
         } catch (Exception e) {
-            LogUtils.ERROR(getClass().getSimpleName(), "Error reading file: ", e);
+            LogUtils.ERROR(getClass().getSimpleName(), "Error reading file: " + mFileName, e);
             return dataMap.values().stream().toList();
         }
     }
@@ -127,7 +117,7 @@ public class EntityDao<T> extends CSVReadWriter<T> {
         for (Field field : mFields) {
             try {
                 if (field.getName().equalsIgnoreCase(fieldName)) {
-                     List<T> objs = readAll();
+                    List<T> objs = readAll();
                     for (T o : objs) {
                         Entity entity = (Entity) o;
                         System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!:    " + entity.toWrite());
@@ -137,7 +127,7 @@ public class EntityDao<T> extends CSVReadWriter<T> {
                         System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!sddadadad:    " + entity.toWrite());
                         field.setAccessible(true);
                         // skip null values
-                        if (o ==null || field.get(o) == null) continue;
+                        if (o == null || field.get(o) == null) continue;
                         Object fieldValue = field.get(o);
                         System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!sddadadad:    " + fieldValue);
                         if (field.get(o).toString().equalsIgnoreCase(value)) {

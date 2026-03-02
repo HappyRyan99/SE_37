@@ -7,17 +7,32 @@ import java.util.Collections;
 
 import static org.softwareeng.group37.contants.Contants.*;
 
+/**
+ * Abstract class serving as a base for all entity models.
+ * Provides common properties and methods for managing and serializing entities.
+ */
 public abstract class Entity {
 
+    /**
+     * Unique identifier for the entity.
+     */
     private int id;
     /**
-     * statu = 0  DEFAUL
-     * statu = 1  ACTIVE
-     * statu = 2  INACTIVE
+     * Status of the entity.
+     * Values:
+     * - 0: DEFAULT
+     * - 1: ACTIVE
+     * - 2: INACTIVE
      */
     private int status;
 
 
+    /**
+     * Serializes the current state of the entity into a comma-separated string.
+     * Handles both field values and headers for database or file storage.
+     *
+     * @return A string representation of the entity in CSV format.
+     */
     public String toWrite() {
         if (id == -1) {
             return getHeader();
@@ -41,6 +56,12 @@ public abstract class Entity {
         return output.toString();
     }
 
+    /**
+     * Generates the CSV header containing the field names of the entity.
+     * Includes field names from the class hierarchy.
+     *
+     * @return A string representing the CSV header.
+     */
     public String getHeader() {
         StringBuilder output = new StringBuilder();
         Class<?> current = this.getClass();
@@ -66,22 +87,48 @@ public abstract class Entity {
         return output.toString();
     }
 
+    /**
+     * Sets the unique identifier for the entity.
+     *
+     * @param id The ID to assign to the entity.
+     */
     public void setId(int id) {
         this.id = id;
     }
 
+    /**
+     * Retrieves the unique identifier of the entity.
+     *
+     * @return The ID of the entity.
+     */
     public int getId() {
         return id;
     }
 
+    /**
+     * Retrieves the textual representation of the entity's status.
+     *
+     * @return The status as a string: "DEFAULT", "ACTIVE", or "INACTIVE".
+     */
     public String getStatus() {
         return castStatus(status);
     }
 
+    /**
+     * Sets the status of the entity using an integer code.
+     *
+     * @param status The status code to assign (0, 1, or 2).
+     */
     public void setStatus(int status) {
         this.status = status;
     }
 
+    /**
+     * Converts an integer status code into its corresponding string representation.
+     *
+     * @param value The status code to convert.
+     * @return A string representing the status.
+     */
     private String castStatus(int value) {
         String status = "";
         switch (value) {
@@ -93,12 +140,17 @@ public abstract class Entity {
                 break;
             case STATUS_DEFAULT:
             default:
-                status = "DEFAUL";
+                status = "DEFAULT";
                 break;
         }
         return status;
     }
 
+    /**
+     * Provides a string representation of the entity's fields and values for debugging or logging.
+     *
+     * @return A string representation of the entity's state.
+     */
     public String toString() {
         Field[] fields = this.getClass().getDeclaredFields();
         StringBuilder output = new StringBuilder();

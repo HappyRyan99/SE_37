@@ -12,7 +12,13 @@ import java.util.List;
 
 import static org.softwareeng.group37.utils.LogUtils.*;
 
+/**
+ * This class handles the login, registration, and user management functionality.
+ */
 public class LoginController {
+    /**
+     * The data access object for managing User entities.
+     */
     private final EntityDao<User> USER_DAO;
     private final String USER_FILE = "users.csv";
     public static User LOGIN_USER;
@@ -21,6 +27,12 @@ public class LoginController {
         USER_DAO = new EntityDao<>(USER_FILE, User.class);
     }
 
+    /**
+     * Handles the login process for a user by checking their credentials.
+     * If no users exist, prompts the user to register first.
+     *
+     * @return true if login is successful, false otherwise.
+     */
     public boolean login() {
         if (!hasUsers()) {
             WARNING( "LOGIN","No users found. Please register first.");
@@ -37,13 +49,15 @@ public class LoginController {
         return login(username, password);
     }
 
+    /**
+     * Validates if there are existing users in the system.
+     *
+     * @return true if users exist, false otherwise.
+     */
     private boolean hasUsers() {
         List<User> users = USER_DAO.readAll();
         DEBUG( "LOGIN","Number of users: " + users.size());
-        for (User user : users) {
-            DEBUG( "LOGIN","User: " + user.getUsername() + " ID: " + user.getId());
-        }
-        return users.size() > 0;
+        return !users.isEmpty();
     }
 
     private boolean login(String username, String password) {
@@ -61,19 +75,15 @@ public class LoginController {
             }
             WARNING( "LOGIN","Incorrect username or password");
             return false;
-//        return USER_DAO.readAll().stream()
-//                .filter(user -> user.getUsername().equals(username)
-//                        && user.getPassword().equals(encryptPassword(password)))
-//                .findFirst()
-//                .map(authenticatedUser -> {
-//                    LOGIN_USER = authenticatedUser;
-//                    LogUtils.WARNING(getClass().getName(), "User logged in successfully: " + authenticatedUser.getUsername());
-//                    return true;
-//                })
-//                .orElse(false);
     }
 
 
+    /**
+     * Handles the registration process for a new user by collecting
+     * their username and password and saving them to the database.
+     *
+     * @return true if registration is successful, false otherwise.
+     */
     public boolean register() {
         java.util.Scanner scanner = new java.util.Scanner(System.in);
         INFO("LOGIN", "Welcome to the REGISTER Interface");
@@ -110,14 +120,24 @@ public class LoginController {
         // Using ANSI color codes to enhance the output
         String colorUsername = "\u001B[34m"; // Blue for username
         String colorId = "\u001B[32m"; // Green for ID
+
+        String colorStatus = "\u001B[33m"; // Yellow for status
         String colorReset = "\u001B[0m"; // Reset color after printing
 
         for (User user : users) {
             System.out.println(colorUsername + "Username: " + user.getUsername() +
-                    colorReset + " , " + colorId + "ID: " + user.getId() + colorReset);
+                    colorReset + " , " + colorId + "ID: " + user.getId() +
+                    colorReset + " , " + colorStatus + "Status: " + user.getStatus() +
+                    colorReset);
         }
     }
 
+    /**
+     * Encrypts a plain-text password using SHA-256 hashing for secure storage.
+     *
+     * @param password the plain-text password to encrypt.
+     * @return the hashed password as a hexadecimal string.
+     */
     private String encryptPassword(String password) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");

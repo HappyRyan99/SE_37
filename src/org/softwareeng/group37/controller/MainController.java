@@ -18,6 +18,7 @@ public class MainController {
     public static void main(String[] args) {
         // Instantiate the LoginController to handle user authentication
         LoginController loginController = new LoginController();
+        TeacherController teacherController = new TeacherController();
 
         // Change the output color to green for the welcome message
         LogUtils.changeOutputColor("GREEN");
@@ -36,9 +37,13 @@ public class MainController {
         // Loop to display the home menu and handle user menu interactions
         while (true) {
             MENU("\n=========================== HOME MENU ===================================\n");
-            MENU("====USER MENU===\n");
+            MENU("==== USER MENU===\n");
             MENU(" 1. REGISTER NEW USER\t");
             MENU(" 2. LIST USERS\t");
+            MENU("\n");
+            MENU("==== TEACHER MENU===\n ");
+            MENU(" 3. REGISTER NEW TEACHER\t");
+            MENU(" 4. LIST TEACHERS\t");
             MENU("\n");
             MENU("==================== QUIT =================================================\n");
             MENU("-1. LOGOUT\t");
@@ -65,6 +70,12 @@ public class MainController {
                     break;
                 case 2: // Case for listing all registered users
                     loginController.listUsers();
+                    break;
+                case 3:
+                    teacherController.addTeacher();
+                    break;
+                case 4:
+                    teacherController.showTeacherList();
                     break;
                 case -1: // Case for logging out and returning to the login prompt
                     INFO("APP", "Logging out...");

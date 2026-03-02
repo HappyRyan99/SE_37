@@ -24,7 +24,7 @@ public class Test {
 
         Teacher teacher = new Teacher();
         teacher.setName("test");
-        teacher.setRegDate(1234567890L);
+        teacher.setRegDate("1234567890");
         teacher.setId(12);
         teacher.setStatus(0);
 

@@ -157,7 +157,7 @@ public abstract class Entity {
         for (Field field : fields) {
             try {
                 field.setAccessible(true);
-                output.append(field.getName()).append(",").append(field.get(this));
+                output.append(field.getName()).append(":").append(field.get(this));
             } catch (IllegalAccessException e) {
                 output.append(field.getName()).append(",").append("NA");
                 LogUtils.ERROR(getClass().getName(), "Error accessing field: ", e);

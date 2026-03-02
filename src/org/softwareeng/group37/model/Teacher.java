@@ -8,7 +8,7 @@ public class Teacher extends Entity {
 
 
     private String name;
-    private long regDate;
+    private String regDate;
 
     public String getName() {
         return name;
@@ -18,11 +18,11 @@ public class Teacher extends Entity {
         this.name = name;
     }
 
-    public long getRegDate() {
+    public String getRegDate() {
         return regDate;
     }
 
-    public void setRegDate(long regDate) {
+    public void setRegDate(String regDate) {
         this.regDate = regDate;
     }
 

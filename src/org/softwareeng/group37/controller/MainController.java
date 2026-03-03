@@ -34,6 +34,7 @@ public class MainController {
             }
         }
 
+
         // Loop to display the home menu and handle user menu interactions
         while (true) {
             MENU("\n=========================== HOME MENU ===================================\n");
@@ -44,6 +45,9 @@ public class MainController {
             MENU("==== TEACHER MENU===\n ");
             MENU(" 3. REGISTER NEW TEACHER\t");
             MENU(" 4. LIST TEACHERS\t");
+            MENU(" 5. QUERY TEACHER\t");
+            MENU(" 6. TRAIN TEACHER\t");
+            MENU(" 7. SHOW TEACHER SKILLS\t");
             MENU("\n");
             MENU("==================== QUIT =================================================\n");
             MENU("-1. LOGOUT\t");
@@ -77,6 +81,14 @@ public class MainController {
                 case 4:
                     teacherController.showTeacherList();
                     break;
+                case 5:
+                    teacherController.queryTeacher();
+                    break;
+                case 6:
+                    teacherController.train();
+                    break;
+                    case 7:
+                        teacherController.showALLTeacherSkills();
                 case -1: // Case for logging out and returning to the login prompt
                     INFO("APP", "Logging out...");
                     while (true) {

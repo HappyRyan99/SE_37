@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * EntityDao is a generic Data Access Object (DAO) class for managing entities stored in CSV files.
@@ -149,12 +150,7 @@ public class EntityDao<T> extends CSVReadWriter<T> {
                         index++;
                     }
                     if (index != -1 && index < values.length) {
-                        field.setAccessible(true);
-                        if (field.getType().equals(int.class)) {
-                            field.set(entity, Integer.parseInt(values[index].trim()));
-                        } else {
-                            field.set(entity, values[index]);
-                        }
+                        setFieldValue(field, entity,values[index]);
                     }
                 }
                 dataMap.put(((Entity) entity).getId(), (T) entity);
@@ -274,6 +270,41 @@ public class EntityDao<T> extends CSVReadWriter<T> {
         }
         FileUtils.fileWriteString(mFileName, stringBuilder.toString());
         return true;
+    }
+
+    protected void setFieldValue(Field field, Object entity, String value) throws IllegalAccessException {
+        if(field == null || entity == null ) {
+            LogUtils.WARNING(getClass().getSimpleName(), "field or entity is null");
+            return;
+        }
+        field.setAccessible(true);
+        if (field.getType().equals(int.class)) {
+            field.set(entity, Integer.parseInt(value.trim()));
+        } else if (field.getType().equals(long.class)) {
+            field.set(entity, Long.parseLong(value.trim()));
+        } else if (field.getType().equals(double.class)) {
+            field.set(entity, Double.parseDouble(value.trim()));
+        } else if (field.getType().equals(float.class)) {
+            field.set(entity, Float.parseFloat(value.trim()));
+        } else if (field.getType().equals(boolean.class)) {
+            field.set(entity, Boolean.parseBoolean(value.trim()));
+        } else if (List.class.isAssignableFrom(field.getType())) {
+            if (field.getType().equals(List.class)) {
+                if (field.getType().getTypeName().contains("Integer")) {
+                    List<Integer> listValues = Stream.of(value.split("\\|"))
+                            .map(Integer::parseInt)
+                            .toList();
+                    field.set(entity, listValues);
+                } else {
+                    List<String> listValues = List.of(value.split("\\|"));
+                    field.set(entity, listValues);
+                }
+            } else {
+                field.set(entity, value.trim());
+            }
+        } else {
+            field.set(entity, value.trim());
+        }
     }
 
 }

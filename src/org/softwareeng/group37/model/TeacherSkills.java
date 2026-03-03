@@ -6,6 +6,14 @@ public class TeacherSkills extends Entity{
     int teacherId;
     List<Integer> skills;
 
+    public List<Integer> getSkills() {
+        return skills;
+    }
+
+    public void setSkills(List<Integer> skills) {
+        this.skills = skills;
+    }
+
     @Override
     public String toWrite() {
         if (getId() == -1) {

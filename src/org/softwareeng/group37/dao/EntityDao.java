@@ -64,27 +64,6 @@ public class EntityDao<T> extends CSVReadWriter<T> {
     }
 
     /**
-     * Writes an entity to the CSV file and updates the in-memory data map.
-     *
-     * @param data the entity to write, which must implement the Entity interface.
-     * @return true if the write operation is successful, false otherwise.
-     */
-    @Override
-    public boolean write(T data) {
-        if (data instanceof Entity) {
-            // Serialize the entity to a string and write it to the CSV file.
-            boolean result = FileUtils.fileWriteString(mFileName, ((Entity) data).toWrite());
-            if (result && ((Entity) data).getId() != -1) {
-                // If the write is successful, add the entity to the data map.
-                dataMap.put(((Entity) data).getId(), data);
-            }
-            return result;
-        } else {
-            return false; // Return false if the data is not an instance of Entity.
-        }
-    }
-
-    /**
      * Reads an entity by its unique ID from the data map.
      *
      * @param id the unique ID of the entity to read.

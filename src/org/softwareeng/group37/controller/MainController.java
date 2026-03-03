@@ -19,17 +19,19 @@ public class MainController {
      * and provides access to the home menu functionality.
      */
 
-    static List<BaseController> controllers;
+    private static final List<BaseController> controllers = new ArrayList<>();
 
 
     public static void main(String[] args) {
-        controllers = new ArrayList<BaseController>();
 
-        SkillController skillController = new SkillController();
-        controllers.add(skillController);
         // Instantiate the LoginController to handle user authentication
         LoginController loginController = new LoginController();
         TeacherController teacherController = new TeacherController();
+        SkillController skillController = new SkillController();
+
+        controllers.add(loginController);
+        controllers.add(teacherController);
+        controllers.add(skillController);
 
         // Change the output color to green for the welcome message
         LogUtils.changeOutputColor("GREEN");
@@ -98,8 +100,8 @@ public class MainController {
                 case 6:
                     teacherController.train();
                     break;
-                    case 7:
-                        teacherController.showALLTeacherSkills();
+                case 7:
+                    teacherController.showALLTeacherSkills();
                 case -1: // Case for logging out and returning to the login prompt
                     INFO("APP", "Logging out...");
                     while (true) {
@@ -109,11 +111,10 @@ public class MainController {
                     }
                     break;
                 case -2: // Case for exiting the application
-                    if (null != controllers) {
-                        for (BaseController baseController : controllers) {
-                            baseController.finish();
-                        }
+                    for (BaseController baseController : controllers) {
+                        baseController.finish();
                     }
+                    System.gc();
                     INFO("APP", "Exiting...");
                     System.exit(0);
                     break;

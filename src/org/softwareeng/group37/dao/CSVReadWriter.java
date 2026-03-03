@@ -56,14 +56,6 @@ public abstract class CSVReadWriter<T> {
     }
 
     /**
-     * Writes the provided data to a CSV file.
-     *
-     * @param data the data to be written
-     * @return true if the write operation was successful, false otherwise
-     */
-    abstract boolean write(T data);
-
-    /**
      * Reads data from the CSV file by its ID.
      *
      * @param id the ID of the data to read

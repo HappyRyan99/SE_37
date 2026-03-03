@@ -7,15 +7,16 @@ public class BaseController<T> {
     private BaseController() {
     }
 
-    protected EntityDao<?> baseDao;
-    java.util.Scanner scanner = new java.util.Scanner(System.in);
+    protected EntityDao<T> mBaseDao;
+    java.util.Scanner mScanner = new java.util.Scanner(System.in);
 
     protected BaseController(String fileName, Class clazz) {
-        baseDao = new EntityDao<T>(fileName, clazz);
+        mBaseDao = new EntityDao<T>(fileName, clazz);
     }
 
-    public void finish(){
-        baseDao.writeToFile();
+    public void finish() {
+        mBaseDao.writeToFile();
+        mBaseDao = null;
     }
 
 }

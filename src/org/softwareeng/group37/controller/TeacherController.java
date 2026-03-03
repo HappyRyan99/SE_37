@@ -1,7 +1,5 @@
 package org.softwareeng.group37.controller;
 
-import org.softwareeng.group37.dao.EntityDao;
-import org.softwareeng.group37.dao.TeacherDAO;
 import org.softwareeng.group37.dao.TeacherSkillsDAO;
 import org.softwareeng.group37.model.Teacher;
 import org.softwareeng.group37.model.TeacherSkills;
@@ -13,19 +11,19 @@ import java.util.Optional;
 
 import static org.softwareeng.group37.utils.LogUtils.*;
 
-public class TeacherController {
-    private final EntityDao<Teacher> teacherDao;
+public class TeacherController extends BaseController<Teacher> {
     private final static String TEACHER_FILE = "teacher.csv";
     java.util.Scanner scanner = new java.util.Scanner(System.in);
 
     SkillController skillController = new SkillController();
     TeacherSkillsDAO teacherSkillsDAO = new TeacherSkillsDAO();
+
     public TeacherController() {
-        teacherDao = new TeacherDAO(TEACHER_FILE);
+        super(TEACHER_FILE, Teacher.class);
     }
 
     public void showTeacherList() {
-        List<Teacher> teachers = teacherDao.readAll();
+        List<Teacher> teachers = mBaseDao.readAll();
         LogUtils.SUCCESS("Teacher List:");
         for (Teacher teacher : teachers) {
             LogUtils.changeOutputColor("CYAN");
@@ -76,14 +74,14 @@ public class TeacherController {
 
     public void showTeacherDetailsShort() {
         LogUtils.SUCCESS("Teacher List:");
-        List<Teacher> teachers = teacherDao.readAll();
+        List<Teacher> teachers = mBaseDao.readAll();
         for (Teacher teacher : teachers) {
             showTeacherDetailsShort(teacher);
         }
     }
 
     public void showTeacher(int teacherId) {
-        Optional<Teacher> teacher = teacherDao.read(teacherId);
+        Optional<Teacher> teacher = mBaseDao.read(teacherId);
         if (teacher.isPresent()) {
             showTeacherDetailsShort(teacher.get());
         } else {
@@ -98,7 +96,7 @@ public class TeacherController {
         String name = scanner.nextLine();
         teacher.setName(name);
         teacher.setRegDate(String.valueOf(System.currentTimeMillis()));
-        teacher.setId(teacherDao.getANewId());
+        teacher.setId(mBaseDao.getANewId());
         teacher.setStatus(0);
         if (register(teacher)) {
             LogUtils.SUCCESS("Teacher added successfully: " + teacher.getName());
@@ -108,7 +106,9 @@ public class TeacherController {
     }
 
     private boolean register(Teacher teacher) {
-        return teacherDao.write(teacher);
+        // TODO: 2026/3/3 add
+        int result = mBaseDao.add(teacher);
+        return true;
     }
 
     public void train() {
@@ -152,39 +152,41 @@ public class TeacherController {
 
 
     }
-    
+
     private boolean register(TeacherSkills teacherSkills) {
-        return teacherSkillsDAO.write(teacherSkills);
+        // TODO: 2026/3/3  dao.add
+        return teacherSkillsDAO.add(teacherSkills) > 0;
     }
-    
+
     public void showTeacherSkills(Teacher teacher) {
-       List<TeacherSkills> teacherSkills = teacherSkillsDAO.readByField("teacherId",String.valueOf(teacher.getId()));
-       showTeacherDetailsShort(teacher);
-       for (TeacherSkills teacherSkill : teacherSkills) {
-           for (Integer skillId : teacherSkill.getSkills()) {
-               skillController.showSKillsById(skillId);
-           }
-       }
+        List<TeacherSkills> teacherSkills = teacherSkillsDAO.readByField("teacherId", String.valueOf(teacher.getId()));
+        showTeacherDetailsShort(teacher);
+        for (TeacherSkills teacherSkill : teacherSkills) {
+            for (Integer skillId : teacherSkill.getSkills()) {
+                skillController.showSKillsById(skillId);
+            }
+        }
     }
+
     public void showTeacherSkills(int teacherId) {
-        Optional<Teacher> teacher = teacherDao.read(teacherId);
+        Optional<Teacher> teacher = mBaseDao.read(teacherId);
         if (teacher.isPresent()) {
             showTeacherSkills(teacher.get());
-        }else {
+        } else {
             WARNING(String.valueOf(teacherId), "Teacher not found");
         }
     }
-    
+
     public void showALLTeacherSkills() {
-       List<Teacher> teachers = teacherDao.readAll();
-       for (Teacher teacher : teachers) {
-           showTeacherSkills(teacher);
-       }
-       if (teachers.isEmpty()) {
-           WARNING("Teacher", "No Teachers found");
-       }
+        List<Teacher> teachers = mBaseDao.readAll();
+        for (Teacher teacher : teachers) {
+            showTeacherSkills(teacher);
+        }
+        if (teachers.isEmpty()) {
+            WARNING("Teacher", "No Teachers found");
+        }
     }
-    
+
     public void queryTeacher() {
         INFO("Teacher", "Query Teacher Details");
         while (true) {
@@ -205,7 +207,7 @@ public class TeacherController {
             } else if ("2".equals(choice)) {
                 USERINPUT("Enter Teacher Name (case-insensitive): ");
                 String name = scanner.nextLine().trim();
-                List<Teacher> teachers = teacherDao.readAll().stream()
+                List<Teacher> teachers = mBaseDao.readAll().stream()
                         .filter(t -> t.getName().equalsIgnoreCase(name))
                         .toList();
                 if (!teachers.isEmpty()) {

@@ -2,7 +2,6 @@ package org.softwareeng.group37.controller;
 
 import org.softwareeng.group37.model.Skills;
 import org.softwareeng.group37.utils.LogUtils;
-import org.softwareeng.group37.utils.Utils;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,31 +26,31 @@ public class SkillController extends BaseController {
         Skills newSkill = new Skills();
         INFO("Skill", "Add New Skill");
         USERINPUT("Enter SkillName: ");
-        String skillName = scanner.nextLine();
+        String skillName = mScanner.nextLine();
 
         USERINPUT("Enter Description: ");
-        String Description = scanner.nextLine();
+        String Description = mScanner.nextLine();
 
-        newSkill.setId(baseDao.getANewId());
+        newSkill.setId(mBaseDao.getANewId());
         newSkill.setSkillName(skillName);
         newSkill.setDescription(Description);
-        baseDao.write(newSkill);
+        mBaseDao.add(newSkill);
     }
 
     public void showFullSkillList() {
-        List skills = baseDao.readAll();
+        List skills = mBaseDao.readAll();
         for (Object skill : skills) {
             showSkillDetails((Skills) skill);
         }
     }
     public void showSkillList() {
-        List skills = baseDao.readAll();
+        List skills = mBaseDao.readAll();
         for (Object skill : skills) {
             showSkillShort((Skills) skill);
         }
     }
     public void showSKillsById(int skillId){
-        Optional skill = baseDao.read(skillId);
+        Optional skill = mBaseDao.read(skillId);
         if(skill.isPresent()){
             showSkillDetails((Skills) skill.get());
         }else {

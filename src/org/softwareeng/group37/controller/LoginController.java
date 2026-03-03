@@ -1,10 +1,7 @@
 package org.softwareeng.group37.controller;
 
-import org.softwareeng.group37.dao.EntityDao;
-import org.softwareeng.group37.model.Entity;
 import org.softwareeng.group37.model.User;
 import org.softwareeng.group37.utils.LogUtils;
-import org.softwareeng.group37.utils.Utils;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -15,16 +12,15 @@ import static org.softwareeng.group37.utils.LogUtils.*;
 /**
  * This class handles the login, registration, and user management functionality.
  */
-public class LoginController {
+public class LoginController extends BaseController<User> {
     /**
      * The data access object for managing User entities.
      */
-    private final EntityDao<User> USER_DAO;
-    private final String USER_FILE = "users.csv";
+    private final static String USER_FILE = "users.csv";
     public static User LOGIN_USER;
 
     public LoginController() {
-        USER_DAO = new EntityDao<>(USER_FILE, User.class);
+        super(USER_FILE, User.class);
     }
 
     /**
@@ -35,11 +31,11 @@ public class LoginController {
      */
     public boolean login() {
         if (!hasUsers()) {
-            WARNING( "LOGIN","No users found. Please register first.");
+            WARNING("LOGIN", "No users found. Please register first.");
             return register();
         }
         java.util.Scanner scanner = new java.util.Scanner(System.in);
-        INFO( "LOGIN","Welcome to the LOGIN Interface");
+        INFO("LOGIN", "Welcome to the LOGIN Interface");
         USERINPUT("Enter username: ");
         String username = scanner.nextLine();
 
@@ -55,26 +51,26 @@ public class LoginController {
      * @return true if users exist, false otherwise.
      */
     private boolean hasUsers() {
-        List<User> users = USER_DAO.readAll();
-        DEBUG( "LOGIN","Number of users: " + users.size());
+        List<User> users = mBaseDao.readAll();
+        DEBUG("LOGIN", "Number of users: " + users.size());
         return !users.isEmpty();
     }
 
     private boolean login(String username, String password) {
-            List<User> users = USER_DAO.readByField("username", username);
-            if (users.isEmpty()) {
-                WARNING( "LOGIN","User not found");
-                return false;
-            }
-            for (User user : users) {
-                if (user.getPassword().equals(encryptPassword(password))) {
-                    LOGIN_USER = user;
-                    LogUtils.SUCCESS( "User logged in successfully: " + user.getUsername());
-                    return true;
-                }
-            }
-            WARNING( "LOGIN","Incorrect username or password");
+        List<User> users = mBaseDao.readByField("username", username);
+        if (users.isEmpty()) {
+            WARNING("LOGIN", "User not found");
             return false;
+        }
+        for (User user : users) {
+            if (user.getPassword().equals(encryptPassword(password))) {
+                LOGIN_USER = user;
+                LogUtils.SUCCESS("User logged in successfully: " + user.getUsername());
+                return true;
+            }
+        }
+        WARNING("LOGIN", "Incorrect username or password");
+        return false;
     }
 
 
@@ -96,13 +92,13 @@ public class LoginController {
             return false;
         }
         User user = new User();
-        user.setId(USER_DAO.getANewId());
+        user.setId(mBaseDao.getANewId());
         user.setUsername(username);
         user.setPassword(password);
         LOGIN_USER = user;
         boolean res = register(user);
-        if (res){
-            LogUtils.SUCCESS( "User registered successfully: " + user.getUsername());
+        if (res) {
+            LogUtils.SUCCESS("User registered successfully: " + user.getUsername());
             return true;
         }
         return false;
@@ -110,12 +106,13 @@ public class LoginController {
 
     public boolean register(User user) {
         user.setPassword(encryptPassword(user.getPassword()));
-
-        return USER_DAO.write(user);
+        mBaseDao.add(user);
+        // TODO: 2026/3/3 what boolean means ?
+        return true;
     }
-    
+
     public void listUsers() {
-        List<User> users = USER_DAO.readAll();
+        List<User> users = mBaseDao.readAll();
         SUCCESS("Number of users: " + users.size());
         // Using ANSI color codes to enhance the output
         String colorUsername = "\u001B[34m"; // Blue for username
@@ -125,10 +122,7 @@ public class LoginController {
         String colorReset = "\u001B[0m"; // Reset color after printing
 
         for (User user : users) {
-            System.out.println(colorUsername + "Username: " + user.getUsername() +
-                    colorReset + " , " + colorId + "ID: " + user.getId() +
-                    colorReset + " , " + colorStatus + "Status: " + user.getStatus() +
-                    colorReset);
+            System.out.println(colorUsername + "Username: " + user.getUsername() + colorReset + " , " + colorId + "ID: " + user.getId() + colorReset + " , " + colorStatus + "Status: " + user.getStatus() + colorReset);
         }
     }
 

@@ -13,9 +13,5 @@ public class TeacherSkillsDAO extends EntityDao<TeacherSkills> {
         super("teacherSkills.csv", TeacherSkills.class);
     }
 
-    @Override
-    public boolean write(TeacherSkills data) {
-        return super.write(data);
-    }
 }
 

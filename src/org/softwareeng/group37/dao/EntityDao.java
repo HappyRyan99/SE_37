@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -80,7 +81,6 @@ public class EntityDao<T> extends CSVReadWriter<T> {
         } else {
             return false; // Return false if the data is not an instance of Entity.
         }
-
     }
 
     /**
@@ -161,7 +161,6 @@ public class EntityDao<T> extends CSVReadWriter<T> {
             }
             if (dataMap.isEmpty() && !hasHeader) {
                 System.out.println("No Entity found in the database. initializing data...");
-                initData();
             }
             return dataMap.values().stream().toList();
         } catch (Exception e) {
@@ -198,23 +197,6 @@ public class EntityDao<T> extends CSVReadWriter<T> {
         }
         return result;
     }
-
-    /**
-     * Initializes the data map with default data if the CSV file is empty.
-     *
-     * @throws NoSuchMethodException     if the default constructor of the entity type is not found.
-     * @throws InvocationTargetException if the constructor throws an exception.
-     * @throws InstantiationException    if the entity type cannot be instantiated.
-     * @throws IllegalAccessException    if the constructor is not accessible.
-     */
-    private void initData() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        Entity entity = (Entity) mType.getDeclaredConstructor().newInstance();
-        entity.setId(-1);
-//        dataMap.put(-1, (T) entity);
-        write((T) entity);
-        LogUtils.DEBUG(getClass().getSimpleName(), "init data");
-    }
-
     /**
      * Retrieves all entity IDs from the data map.
      *
@@ -235,6 +217,63 @@ public class EntityDao<T> extends CSVReadWriter<T> {
             int value = dataMap.size() + 1;
             return (value);
         }
+    }
+
+    public int add(T t) {
+        int id = getANewId();
+        dataMap.put(getANewId(), t);
+        return id;
+    }
+
+    public boolean delete(T t) {
+        dataMap.remove(t);
+        return true;
+    }
+
+    public boolean update(int id, T t) {
+        dataMap.put(Integer.valueOf(id), t);
+        return true;
+    }
+
+    public List<T> queryAll() {
+        return dataMap.values().stream().toList();
+    }
+
+    public boolean writeToFile() {
+        StringBuilder stringBuilder = new StringBuilder();
+        Iterator<T> iterator = dataMap.values().iterator();
+        try {
+            T title = (T) mType.getDeclaredConstructor().newInstance();
+            stringBuilder.append(((Entity) title).getHeader());
+        } catch (Exception e) {
+            return false;
+        }
+
+        while (iterator.hasNext()) {
+            T t = iterator.next();
+            Field[] fields = t.getClass().getDeclaredFields();
+            StringBuilder output = new StringBuilder();
+            if (t instanceof Entity) {
+                Entity e = (Entity) t;
+                output.append(String.format("%d,%d,", e.getId(), e.getStatusAsInt()));
+            }
+            for (Field field : fields) {
+                try {
+                    field.setAccessible(true);
+                    output.append(field.get(t)).append(",");
+                } catch (IllegalAccessException e) {
+                    output.append(field.getName()).append(",").append("NA");
+                    LogUtils.ERROR(getClass().getName(), "Error accessing field: ", e);
+                }
+            }
+            if (output.toString().endsWith(",")) {
+                output.deleteCharAt(output.length() - 1);
+            }
+            output.append("\n");
+            stringBuilder.append(output.toString());
+        }
+        FileUtils.fileWriteString(mFileName, stringBuilder.toString());
+        return true;
     }
 
 }

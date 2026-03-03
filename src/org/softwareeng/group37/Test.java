@@ -2,6 +2,7 @@ package org.softwareeng.group37;
 
 import org.softwareeng.group37.dao.EntityDao;
 import org.softwareeng.group37.model.Entity;
+import org.softwareeng.group37.model.Skills;
 import org.softwareeng.group37.model.Teacher;
 import org.softwareeng.group37.model.User;
 import org.softwareeng.group37.utils.InitDatabase;
@@ -20,40 +21,34 @@ public class Test {
 
 
     void test1() {
-        InitDatabase.init();
-
-        Teacher teacher = new Teacher();
-        teacher.setName("test");
-        teacher.setRegDate("1234567890");
-        teacher.setId(12);
-        teacher.setStatus(0);
-
-        User user = new User();
-        user.setId(122);
-        user.setUsername("tasdfasdfaest");
-        user.setPassword("dafsdfa");
-        user.setStatus(1);
-
-//        System.out.println(teacher.getHeader());
-//        System.out.println(teacher.toWrite());
-//        System.out.println(user.getHeader());
-//        System.out.println(user.toWrite());
-
-        EntityDao entityDao = new EntityDao("users.csv", User.class);
-        List<User> userList = entityDao.readAll();
-        System.out.println("==========userlist size" + userList.size());
-//        entityDao.write(user);
-        for (User u : userList) {
-            System.out.println(u.toWrite());
-            System.out.println("=======getUsername==========" + u.getUsername());
-            System.out.println("=======getStatus==========" + u.getStatus());
+        EntityDao baseDao = new EntityDao<Skills>("skills.csv", Skills.class);
+        List<Skills> all = baseDao.readAll();
+        for (Skills skill : all) {
+            System.out.print(skill.toString());
         }
-        Optional<User> u122 = entityDao.read(122);
-        if (u122.isPresent()) {
-            System.out.println("=======u122 isPresent==========");
-            System.out.println(u122.get().toString());
+
+//        for (int i = 0; i < 10; i++) {
+//            Skills skills = new Skills();
+//            skills.setId(baseDao.getANewId());
+//            skills.setSkillName("SkillName:" + i);
+//            skills.setDescription("SkillDescription:" + i);
+//            baseDao.add(skills);
+//        }
+
+        System.out.println("===================queryAll========================");
+
+        List<Skills> newSk = baseDao.queryAll();
+        for (Skills skill : newSk) {
+            System.out.print(skill.toString());
+        }
+        Optional<Skills> optional = baseDao.read(29);
+        if (optional.isPresent()) {
+            Skills data = optional.get();
+            data.setDescription("New Description");
+            baseDao.update(data.getId(),data);
         } else {
-            System.out.println("=======u122==========" + "not found");
         }
+        System.out.println("===================Write====================");
+        baseDao.writeToFile();
     }
 }

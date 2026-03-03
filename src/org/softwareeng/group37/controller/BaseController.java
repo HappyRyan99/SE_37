@@ -14,4 +14,8 @@ public class BaseController<T> {
         baseDao = new EntityDao<T>(fileName, clazz);
     }
 
+    public void finish(){
+        baseDao.writeToFile();
+    }
+
 }

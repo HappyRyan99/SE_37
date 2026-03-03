@@ -7,7 +7,7 @@ public class FileUtils {
     private final static String FILEUTILSTAG = FileUtils.class.getSimpleName();
 
     public static boolean fileWriteString(String mFileName, String data) {
-        try (java.io.FileWriter fw = new java.io.FileWriter(mFileName, true)) {
+        try (java.io.FileWriter fw = new java.io.FileWriter(mFileName, false)) {
             fw.append(data);
             fw.flush();
             return true;

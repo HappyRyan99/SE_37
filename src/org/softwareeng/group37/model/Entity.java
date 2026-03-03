@@ -114,6 +114,10 @@ public abstract class Entity {
         return castStatus(status);
     }
 
+    public int getStatusAsInt() {
+        return status;
+    }
+
     /**
      * Sets the status of the entity using an integer code.
      *
@@ -154,10 +158,23 @@ public abstract class Entity {
     public String toString() {
         Field[] fields = this.getClass().getDeclaredFields();
         StringBuilder output = new StringBuilder();
+        Class<?> superClass = this.getClass().getSuperclass();
+        if (null != superClass && (superClass.getSimpleName().equals(Entity.class.getSimpleName()))) {
+            Field[] superClassFields = superClass.getDeclaredFields();
+            StringBuilder classFieldName = new StringBuilder();
+            for (Field field : superClassFields) {
+                try {
+                    classFieldName.append(field.get(this)).append(" | ");
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            output.append(classFieldName.toString());
+        }
         for (Field field : fields) {
             try {
                 field.setAccessible(true);
-                output.append(field.getName()).append(":").append(field.get(this));
+                output.append(field.getName()).append(":").append(field.get(this)).append(" | ");
             } catch (IllegalAccessException e) {
                 output.append(field.getName()).append(",").append("NA");
                 LogUtils.ERROR(getClass().getName(), "Error accessing field: ", e);

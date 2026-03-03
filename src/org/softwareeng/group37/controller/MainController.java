@@ -3,6 +3,9 @@ package org.softwareeng.group37.controller;
 import org.softwareeng.group37.utils.LogUtils;
 import org.softwareeng.group37.utils.Utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.softwareeng.group37.utils.LogUtils.*;
 
 /**
@@ -15,7 +18,15 @@ public class MainController {
      * The main method initializes the LoginController, handles user login,
      * and provides access to the home menu functionality.
      */
+
+    static List<BaseController> controllers;
+
+
     public static void main(String[] args) {
+        controllers = new ArrayList<BaseController>();
+
+        SkillController skillController = new SkillController();
+        controllers.add(skillController);
         // Instantiate the LoginController to handle user authentication
         LoginController loginController = new LoginController();
         TeacherController teacherController = new TeacherController();
@@ -86,6 +97,11 @@ public class MainController {
                     }
                     break;
                 case -2: // Case for exiting the application
+                    if (null != controllers) {
+                        for (BaseController baseController : controllers) {
+                            baseController.finish();
+                        }
+                    }
                     INFO("APP", "Exiting...");
                     System.exit(0);
                     break;

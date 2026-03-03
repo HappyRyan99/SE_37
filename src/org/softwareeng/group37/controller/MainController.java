@@ -1,7 +1,6 @@
 package org.softwareeng.group37.controller;
 
 import org.softwareeng.group37.utils.LogUtils;
-import org.softwareeng.group37.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;

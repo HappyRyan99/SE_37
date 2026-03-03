@@ -13,7 +13,6 @@ import static org.softwareeng.group37.utils.LogUtils.*;
 
 public class TeacherController extends BaseController<Teacher> {
     private final static String TEACHER_FILE = "teacher.csv";
-    java.util.Scanner scanner = new java.util.Scanner(System.in);
 
     SkillController skillController = new SkillController();
     TeacherSkillsDAO teacherSkillsDAO = new TeacherSkillsDAO();
@@ -93,7 +92,7 @@ public class TeacherController extends BaseController<Teacher> {
         Teacher teacher = new Teacher();
         LogUtils.INFO("Teacher", "Add New Teacher");
         USERINPUT("enter teacher's name: ");
-        String name = scanner.nextLine();
+        String name = mScanner.nextLine();
         teacher.setName(name);
         teacher.setRegDate(String.valueOf(System.currentTimeMillis()));
         teacher.setId(mBaseDao.getANewId());
@@ -121,7 +120,7 @@ public class TeacherController extends BaseController<Teacher> {
         while (true) {
             try {
                 USERINPUT("Enter Teacher ID: ");
-                id = Integer.parseInt(scanner.nextLine());
+                id = Integer.parseInt(mScanner.nextLine());
                 break;
             } catch (NumberFormatException e) {
                 System.out.println("Invalid input. Please enter a valid integer.");
@@ -133,8 +132,9 @@ public class TeacherController extends BaseController<Teacher> {
             INFO("Skills", "Available Skills:");
             skillController.showSkillList();
             USERINPUT("Select skills by typing IDs separated by spaces: ");
-            String input = scanner.nextLine();
+            String input = mScanner.nextLine();
             try {
+                // TODO: 2026/3/3 might have some bug. like input 0 directly
                 selectedSkillIds = java.util.Arrays.stream(input.split(" "))
                         .map(Integer::parseInt)
                         .toList();
@@ -149,8 +149,6 @@ public class TeacherController extends BaseController<Teacher> {
         } else {
             WARNING("Teacher", "Failed to add teacher:");
         }
-
-
     }
 
     private boolean register(TeacherSkills teacherSkills) {
@@ -191,12 +189,12 @@ public class TeacherController extends BaseController<Teacher> {
         INFO("Teacher", "Query Teacher Details");
         while (true) {
             USERINPUT("Search by (1) ID or (2) Name? Enter your choice: ");
-            String choice = scanner.nextLine().trim();
+            String choice = mScanner.nextLine().trim();
 
             if ("1".equals(choice)) {
                 USERINPUT("Enter Teacher ID: ");
                 try {
-                    int id = Integer.parseInt(scanner.nextLine().trim());
+                    int id = Integer.parseInt(mScanner.nextLine().trim());
                     showTeacher(id);
                     System.out.println("Skills:");
                     showTeacherSkills(id);
@@ -206,7 +204,7 @@ public class TeacherController extends BaseController<Teacher> {
                 break;
             } else if ("2".equals(choice)) {
                 USERINPUT("Enter Teacher Name (case-insensitive): ");
-                String name = scanner.nextLine().trim();
+                String name = mScanner.nextLine().trim();
                 List<Teacher> teachers = mBaseDao.readAll().stream()
                         .filter(t -> t.getName().equalsIgnoreCase(name))
                         .toList();

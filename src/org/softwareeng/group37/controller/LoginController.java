@@ -34,13 +34,12 @@ public class LoginController extends BaseController<User> {
             WARNING("LOGIN", "No users found. Please register first.");
             return register();
         }
-        java.util.Scanner scanner = new java.util.Scanner(System.in);
         INFO("LOGIN", "Welcome to the LOGIN Interface");
         USERINPUT("Enter username: ");
-        String username = scanner.nextLine();
+        String username = mScanner.nextLine();
 
         USERINPUT("Enter password: ");
-        String password = scanner.nextLine();
+        String password = mScanner.nextLine();
 
         return login(username, password);
     }
@@ -81,12 +80,11 @@ public class LoginController extends BaseController<User> {
      * @return true if registration is successful, false otherwise.
      */
     public boolean register() {
-        java.util.Scanner scanner = new java.util.Scanner(System.in);
         INFO("LOGIN", "Welcome to the REGISTER Interface");
         USERINPUT("Enter username: ");
-        String username = scanner.nextLine();
+        String username = mScanner.nextLine();
         USERINPUT("Enter password: ");
-        String password = scanner.nextLine();
+        String password = mScanner.nextLine();
         if (username.isEmpty() || password.isEmpty()) {
             LogUtils.WARNING(getClass().getName(), "Username or password cannot be empty");
             return false;

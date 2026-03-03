@@ -4,6 +4,7 @@ import org.softwareeng.group37.utils.LogUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import static org.softwareeng.group37.utils.LogUtils.*;
 
@@ -67,7 +68,7 @@ public class MainController {
             MENU("\n");
 
             // Prompt user for input and ensure valid integer choice is entered
-            java.util.Scanner scanner = new java.util.Scanner(System.in);
+            Scanner scanner = new java.util.Scanner(System.in);
             int choice;
             while (true) {
                 try {

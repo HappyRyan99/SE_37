@@ -105,9 +105,7 @@ public class TeacherController extends BaseController<Teacher> {
     }
 
     private boolean register(Teacher teacher) {
-        // TODO: 2026/3/3 add
-        int result = mBaseDao.add(teacher);
-        return true;
+        return mBaseDao.add(teacher) > -1;
     }
 
     public void train() {
@@ -152,8 +150,7 @@ public class TeacherController extends BaseController<Teacher> {
     }
 
     private boolean register(TeacherSkills teacherSkills) {
-        // TODO: 2026/3/3  dao.add
-        return teacherSkillsDAO.add(teacherSkills) > 0;
+        return teacherSkillsDAO.add(teacherSkills) > -1;
     }
 
     public void showTeacherSkills(Teacher teacher) {

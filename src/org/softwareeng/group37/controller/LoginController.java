@@ -104,9 +104,7 @@ public class LoginController extends BaseController<User> {
 
     public boolean register(User user) {
         user.setPassword(encryptPassword(user.getPassword()));
-        mBaseDao.add(user);
-        // TODO: 2026/3/3 what boolean means ?
-        return true;
+        return mBaseDao.add(user) > -1;
     }
 
     public void listUsers() {

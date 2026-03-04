@@ -1,0 +1,51 @@
+package org.softwareeng.group37.dao;
+
+import org.softwareeng.group37.model.Teacher;
+import org.softwareeng.group37.utils.LogUtils;
+
+import java.util.List;
+
+public class TeacherDAO extends EntityDao<Teacher>{
+    public TeacherDAO() {
+        super("teacher.csv", Teacher.class);
+    }
+    public TeacherDAO(String fileName) {
+        super(fileName, Teacher.class);
+    }
+
+
+    // TODO: 2026/3/3 OPT this logic
+//    @Override
+//    public boolean write(Teacher data) {
+//        try {
+//            if (data == null) {
+//                LogUtils.WARNING(getClass().getName(), "Teacher is null");
+//                return false;
+//            }
+//            // for data initialization
+//            if (data.getId() == -1){
+//               return super.write(data);
+//            }
+//            if (data.getRegDate().isBlank() ){
+//                data.setRegDate(String.valueOf(System.currentTimeMillis()));
+//            }
+//            if (data.getId() == 0 || data.getId() < -1) {
+//                data.setId(getANewId());
+//            }
+//            if (data.getName().isBlank()){
+//                LogUtils.WARNING(getClass().getName(), "Teacher name is empty");
+//                return false;
+//            }
+//            List<Teacher>  teachers = readByField("name", data.getName());
+//            if (!teachers.isEmpty()) {
+//                LogUtils.WARNING(getClass().getName(), "Teacher name already exists");
+//                return false;
+//            }
+//            return super.write(data);
+//        }
+//        catch (Exception e) {
+//            LogUtils.ERROR(getClass().getName(), "Error writing data: ", e);
+//            return false;
+//        }
+//    }
+}

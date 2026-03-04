@@ -63,18 +63,18 @@ public class SkillController extends BaseController {
         LogUtils.changeOutputColor("CYAN");
         System.out.print("ID: ");
         LogUtils.changeOutputColor("GREEN");
-        System.out.println(skill.getId());
+        System.out.print(skill.getId());
 
         LogUtils.changeOutputColor("CYAN");
-        System.out.print("Skill Name: ");
+        System.out.print("\tSkill Name: ");
         LogUtils.changeOutputColor("YELLOW");
-        System.out.println(skill.getSkillName());
+        System.out.print(skill.getSkillName());
 
         LogUtils.changeOutputColor("CYAN");
-        System.out.print("Description: ");
+        System.out.print("\tDescription: ");
         LogUtils.changeOutputColor("BLUE");
-        System.out.println(skill.getDescription());
-        System.out.println("\t");
+        System.out.print(skill.getDescription());
+        System.out.println("\n");
         LogUtils.resetOutputColor();
     }
 
@@ -82,13 +82,13 @@ public class SkillController extends BaseController {
         LogUtils.changeOutputColor("CYAN");
         System.out.print("ID: ");
         LogUtils.changeOutputColor("GREEN");
-        System.out.println(skill.getId());
+        System.out.print(skill.getId());
 
         LogUtils.changeOutputColor("CYAN");
-        System.out.print("Skill Name: ");
+        System.out.print("\tSkill Name: ");
         LogUtils.changeOutputColor("YELLOW");
-        System.out.println(skill.getSkillName());
-        System.out.println("\t");
+        System.out.print(skill.getSkillName());
+        System.out.print("\t");
         LogUtils.resetOutputColor();
     }
 

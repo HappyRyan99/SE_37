@@ -111,7 +111,7 @@ public class TeacherController extends BaseController<Teacher> {
         int id = -2;
         while (true) {
             try {
-                USERINPUT("Enter Teacher ID: ");
+                USERINPUT("\nEnter Teacher ID: ");
                 id = Integer.parseInt(mScanner.nextLine());
                 break;
             } catch (NumberFormatException e) {
@@ -123,7 +123,7 @@ public class TeacherController extends BaseController<Teacher> {
         while (true) {
             INFO("Skills", "Available Skills:");
             skillController.showSkillList();
-            USERINPUT("Select skills by typing IDs separated by spaces: ");
+            USERINPUT("\nSelect skills by typing IDs separated by spaces: ");
             String input = mScanner.nextLine();
             try {
                 // TODO: 2026/3/3 might have some bug. like input 0 directly
@@ -155,6 +155,7 @@ public class TeacherController extends BaseController<Teacher> {
                 skillController.showSKillsById(skillId);
             }
         }
+        System.out.println("\n");
     }
 
     public void showTeacherSkills(int teacherId) {
@@ -215,4 +216,9 @@ public class TeacherController extends BaseController<Teacher> {
     }
 
 
+    @Override
+    public void finish() {
+        super.finish();
+        teacherSkillsDAO.writeToFile();
+    }
 }

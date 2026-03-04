@@ -14,7 +14,6 @@ import java.util.Optional;
 
 public class TeachingReqController extends BaseController {
 
-    RequirementsDAO mRequirementsDao = RequirementsDAO.getInstance();
     TeacherDAO mTeacherDao = null;
     TeacherSkillsDAO mTeacherSkillsDAO = null;
     ;

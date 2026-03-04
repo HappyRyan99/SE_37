@@ -1,14 +1,8 @@
 package org.softwareeng.group37;
 
 import org.softwareeng.group37.dao.EntityDao;
-import org.softwareeng.group37.model.Entity;
 import org.softwareeng.group37.model.Skills;
-import org.softwareeng.group37.model.Teacher;
-import org.softwareeng.group37.model.User;
-import org.softwareeng.group37.utils.InitDatabase;
-import org.softwareeng.group37.utils.Utils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 

@@ -3,7 +3,6 @@ package org.softwareeng.group37.model;
 import org.softwareeng.group37.utils.LogUtils;
 
 import java.lang.reflect.Field;
-import java.util.Collections;
 
 import static org.softwareeng.group37.contants.Contants.*;
 

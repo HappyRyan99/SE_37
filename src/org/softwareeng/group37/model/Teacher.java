@@ -6,7 +6,6 @@ import java.lang.reflect.Field;
 
 public class Teacher extends Entity {
 
-
     private String name;
     private String regDate;
 
@@ -26,10 +25,4 @@ public class Teacher extends Entity {
         this.regDate = regDate;
     }
 
-//
-//    @Override
-//    public String toWrite() {
-//        String te = toWriteId() + super.toWrite();
-//        return te;
-//    }
 }

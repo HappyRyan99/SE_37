@@ -56,12 +56,17 @@ public class TeachingReqController extends BaseController {
         });
     }
 
-    private void showSkillAvailableTeacher(int skillId) {
+    private int showSkillAvailableTeacher(int skillId) {
         List<TeacherSkills> availableTeacher = mTeacherSkillsDAO.readByField("skills", String.valueOf(skillId));
         if (availableTeacher.isEmpty()) {
-            // TODO: 2026/3/4 output
+            // TODO: 2026/3/4 get into recruit process
+            return -1;
         } else {
-
+            // TODO: 2026/3/4 choose one teacher
+            for (TeacherSkills teacherSkills : availableTeacher) {
+                System.out.println("teacherId: " + teacherSkills.getTeacherId());
+            }
+            return 1;
         }
     }
 

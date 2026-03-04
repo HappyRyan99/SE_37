@@ -11,6 +11,7 @@ public class BaseController<T> {
     java.util.Scanner mScanner = new java.util.Scanner(System.in);
 
     protected BaseController(Class clazz) {
+
     }
 
     public void finish() {

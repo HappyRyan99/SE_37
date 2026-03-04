@@ -15,10 +15,6 @@ public class TeacherController extends BaseController<Teacher> {
     SkillController skillController = new SkillController();
     TeacherSkillsDAO teacherSkillsDAO = TeacherSkillsDAO.getInstance();
 
-    public TeacherController() {
-        super(Teacher.class);
-    }
-
     public void showTeacherList() {
         List<Teacher> teachers = mBaseDao.readAll();
         LogUtils.SUCCESS("Teacher List:");

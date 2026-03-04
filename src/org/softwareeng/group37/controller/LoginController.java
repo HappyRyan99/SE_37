@@ -22,7 +22,6 @@ public class LoginController extends BaseController<User> {
     public static User LOGIN_USER;
 
     public LoginController() {
-        super(User.class);
         mBaseDao = UserDAO.getInstance();
     }
 

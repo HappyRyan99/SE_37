@@ -12,7 +12,6 @@ import static org.softwareeng.group37.utils.LogUtils.*;
 public class SkillController extends BaseController {
 
     public SkillController() {
-        super(Skills.class);
         mBaseDao = SkillsDAO.getInstance();
     }
 

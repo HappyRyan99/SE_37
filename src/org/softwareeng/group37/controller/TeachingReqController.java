@@ -14,17 +14,12 @@ import java.util.Optional;
 
 public class TeachingReqController extends BaseController {
 
-    protected TeachingReqController(Class clazz) {
-        super(clazz);
-    }
-
     RequirementsDAO mRequirementsDao = RequirementsDAO.getInstance();
     TeacherDAO mTeacherDao = null;
     TeacherSkillsDAO mTeacherSkillsDAO = null;
     ;
 
     public TeachingReqController() {
-        super(Teacher.class);
         mBaseDao = RequirementsDAO.getInstance();
         mTeacherDao = TeacherDAO.getInstance();
         mTeacherSkillsDAO = TeacherSkillsDAO.getInstance();

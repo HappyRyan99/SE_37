@@ -12,13 +12,11 @@ import java.util.Optional;
 import static org.softwareeng.group37.utils.LogUtils.*;
 
 public class TeacherController extends BaseController<Teacher> {
-    private final static String TEACHER_FILE = "teacher.csv";
-
     SkillController skillController = new SkillController();
-    TeacherSkillsDAO teacherSkillsDAO = new TeacherSkillsDAO();
+    TeacherSkillsDAO teacherSkillsDAO = TeacherSkillsDAO.getInstance();
 
     public TeacherController() {
-        super(TEACHER_FILE, Teacher.class);
+        super(Teacher.class);
     }
 
     public void showTeacherList() {

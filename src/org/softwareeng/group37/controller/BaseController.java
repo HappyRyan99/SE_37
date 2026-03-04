@@ -10,12 +10,13 @@ public class BaseController<T> {
     protected EntityDao<T> mBaseDao;
     java.util.Scanner mScanner = new java.util.Scanner(System.in);
 
-    protected BaseController(String fileName, Class clazz) {
-        mBaseDao = new EntityDao<T>(fileName, clazz);
+    protected BaseController(Class clazz) {
     }
 
     public void finish() {
-        mBaseDao.writeToFile();
+        if (mBaseDao != null) {
+            mBaseDao.writeToFile();
+        }
         mBaseDao = null;
     }
 

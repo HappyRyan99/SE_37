@@ -1,5 +1,7 @@
 package org.softwareeng.group37.controller;
 
+import org.softwareeng.group37.dao.EntityDao;
+import org.softwareeng.group37.dao.UserDAO;
 import org.softwareeng.group37.model.User;
 import org.softwareeng.group37.utils.LogUtils;
 
@@ -20,7 +22,8 @@ public class LoginController extends BaseController<User> {
     public static User LOGIN_USER;
 
     public LoginController() {
-        super(USER_FILE, User.class);
+        super(User.class);
+        mBaseDao = UserDAO.getInstance();
     }
 
     /**

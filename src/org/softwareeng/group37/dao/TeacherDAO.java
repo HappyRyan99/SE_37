@@ -6,14 +6,24 @@ import org.softwareeng.group37.utils.LogUtils;
 import java.util.List;
 
 public class TeacherDAO extends EntityDao<Teacher> {
-    public TeacherDAO() {
-        super("teacher.csv", Teacher.class);
+    private final static String TEACHER_FILE = "teacher.csv";
+
+    private TeacherDAO() {
+        super(TEACHER_FILE, Teacher.class);
     }
 
-    public TeacherDAO(String fileName) {
+    private TeacherDAO(String fileName) {
         super(fileName, Teacher.class);
     }
 
+    static TeacherDAO mInstance = null;
+
+    public static TeacherDAO getInstance() {
+        if (null == mInstance) {
+            mInstance = new TeacherDAO();
+        }
+        return mInstance;
+    }
 
     @Override
     public int add(Teacher data) {

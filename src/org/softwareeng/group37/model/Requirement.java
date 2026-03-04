@@ -1,25 +1,29 @@
 package org.softwareeng.group37.model;
 
+import java.util.List;
+
 public class Requirement extends Entity{
 
-    private String requirement;
-    private String description;
+    private String requirementName;
+    private int skillId;
+    private List<Teacher>  teachers;
     private long createDate;
 
-    public String getRequirement() {
-        return requirement;
+
+    public String getRequirementName() {
+        return requirementName;
     }
 
-    public void setRequirement(String requirement) {
-        this.requirement = requirement;
+    public void setRequirementName(String requirementName) {
+        this.requirementName = requirementName;
     }
 
-    public String getDescription() {
-        return description;
+    public List<Teacher> getTeachers() {
+        return teachers;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setTeachers(List<Teacher> teachers) {
+        this.teachers = teachers;
     }
 
     public long getCreateDate() {
@@ -28,5 +32,13 @@ public class Requirement extends Entity{
 
     public void setCreateDate(long createDate) {
         this.createDate = createDate;
+    }
+
+    public int getSkillId() {
+        return skillId;
+    }
+
+    public void setSkillId(int skillId) {
+        this.skillId = skillId;
     }
 }

@@ -1,5 +1,6 @@
 package org.softwareeng.group37.controller;
 
+import org.softwareeng.group37.dao.SkillsDAO;
 import org.softwareeng.group37.model.Skills;
 import org.softwareeng.group37.utils.LogUtils;
 
@@ -10,10 +11,9 @@ import static org.softwareeng.group37.utils.LogUtils.*;
 
 public class SkillController extends BaseController {
 
-    private final static String SKILLS_FILE = "skills.csv";
-
     public SkillController() {
-        super(SKILLS_FILE, Skills.class);
+        super(Skills.class);
+        mBaseDao = SkillsDAO.getInstance();
     }
 
     public static void main(String[] args) {
@@ -43,17 +43,19 @@ public class SkillController extends BaseController {
             showSkillDetails((Skills) skill);
         }
     }
+
     public void showSkillList() {
         List skills = mBaseDao.readAll();
         for (Object skill : skills) {
             showSkillShort((Skills) skill);
         }
     }
-    public void showSKillsById(int skillId){
+
+    public void showSKillsById(int skillId) {
         Optional skill = mBaseDao.read(skillId);
-        if(skill.isPresent()){
+        if (skill.isPresent()) {
             showSkillDetails((Skills) skill.get());
-        }else {
+        } else {
             USERINPUT("N/A ");
         }
     }
@@ -90,7 +92,6 @@ public class SkillController extends BaseController {
         System.out.println("\t");
         LogUtils.resetOutputColor();
     }
-
 
 
 }

@@ -1,27 +1,25 @@
 package org.softwareeng.group37.controller;
 
+import org.softwareeng.group37.dao.EntityDao;
 import org.softwareeng.group37.dao.TeacherDAO;
-import org.softwareeng.group37.dao.TeacherSkillsDAO;
 import org.softwareeng.group37.model.Teacher;
-import org.softwareeng.group37.model.TeacherSkills;
 import org.softwareeng.group37.utils.DateUtils;
 import org.softwareeng.group37.utils.LogUtils;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.softwareeng.group37.utils.LogUtils.*;
 
 public class TeacherController extends BaseController<Teacher> {
     SkillController skillController = new SkillController();
-    TeacherSkillsDAO teacherSkillsDAO = TeacherSkillsDAO.getInstance();
 
     public TeacherController() {
         mBaseDao = TeacherDAO.getInstance();
     }
 
     public void showTeacherList() {
-        List<Teacher> teachers = mBaseDao.readAll();
+        List<Teacher> teachers = mBaseDao.queryAll();
         LogUtils.SUCCESS("Teacher List:");
         for (Teacher teacher : teachers) {
             LogUtils.changeOutputColor("CYAN");
@@ -49,10 +47,8 @@ public class TeacherController extends BaseController<Teacher> {
     }
 
     public void showTeacherDetailsShort(Teacher teacher) {
-
-
         LogUtils.changeOutputColor("CYAN");
-        System.out.print("ID: ");
+        System.out.print("Teacher ID: ");
         LogUtils.changeOutputColor("GREEN");
         System.out.print(teacher.getId() + " ");
 
@@ -67,12 +63,11 @@ public class TeacherController extends BaseController<Teacher> {
         System.out.print(teacher.getStatus() + "\t");
 
         LogUtils.resetOutputColor();
-
     }
 
     public void showTeacherDetailsShort() {
         LogUtils.SUCCESS("Teacher List:");
-        List<Teacher> teachers = mBaseDao.readAll();
+        List<Teacher> teachers = mBaseDao.queryAll();
         for (Teacher teacher : teachers) {
             showTeacherDetailsShort(teacher);
         }
@@ -105,6 +100,7 @@ public class TeacherController extends BaseController<Teacher> {
         teacher.setRegDate(String.valueOf(System.currentTimeMillis()));
         teacher.setId(mBaseDao.getANewId());
         teacher.setStatus(0);
+        teacher.setSkills(new ArrayList<>());
         if (register(teacher)) {
             LogUtils.SUCCESS("Teacher added successfully: " + teacher.getName());
         } else {
@@ -112,16 +108,9 @@ public class TeacherController extends BaseController<Teacher> {
         }
     }
 
-    private boolean register(Teacher teacher) {
-        return mBaseDao.add(teacher) > -1;
-    }
-
     public void train() {
         INFO("Teacher", "Train Teacher");
         showTeacherDetailsShort();
-        TeacherSkills teacherSkills = new TeacherSkills();
-        teacherSkills.setId(teacherSkillsDAO.getANewId());
-        teacherSkills.setStatus(0);
         int id = -2;
         while (true) {
             try {
@@ -132,44 +121,56 @@ public class TeacherController extends BaseController<Teacher> {
                 System.out.println("Invalid input. Please enter a valid integer.");
             }
         }
-        teacherSkills.setTeacherId(id);
-        List<Integer> selectedSkillIds;
-        while (true) {
-            INFO("Skills", "Available Skills:");
-            skillController.showSkillList();
-            USERINPUT("\nSelect skills by typing IDs separated by spaces: ");
-            String input = mScanner.nextLine();
-            try {
-                // TODO: 2026/3/3 might have some bug. like input 0 directly
-                selectedSkillIds = java.util.Arrays.stream(input.split(" "))
-                        .map(Integer::parseInt)
-                        .toList();
-                break;
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter valid skill IDs separated by spaces.");
+        Optional<Teacher> toBeTrainedTeacher = mBaseDao.read(id);
+        if (toBeTrainedTeacher.isPresent()) {
+            Teacher teacher = toBeTrainedTeacher.get();
+            List<Integer> selectedSkillIds = null;
+            while (true) {
+                INFO("Skills", "Available Skills:");
+                skillController.showSkillList();
+                USERINPUT("\nSelect skills by typing IDs separated by spaces: ");
+                String input = mScanner.nextLine();
+                try {
+                    selectedSkillIds = java.util.Arrays.stream(input.split(" ")).map(Integer::parseInt).toList();
+                    break;
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input. Please enter valid skill IDs separated by spaces.");
+                }
             }
-        }
-        teacherSkills.setSkills(selectedSkillIds);
-        if (register(teacherSkills)) {
-            LogUtils.SUCCESS("Teacher added successfully: " + teacherSkills.getTeacherId());
+            if (teacher.getSkills().size() > 0) {
+                ArrayList newSkills = new ArrayList(selectedSkillIds);
+                newSkills.addAll(teacher.getSkills());
+
+                Set<Integer> set = new HashSet<>(newSkills);
+                newSkills = new ArrayList<>(set);
+                teacher.setSkills(newSkills);
+            } else {
+                teacher.setSkills(selectedSkillIds);
+            }
+            if (register(teacher)) {
+                LogUtils.SUCCESS("Teacher added successfully: " + teacher.getId());
+            } else {
+                WARNING("Teacher", "Failed to add teacher:");
+            }
         } else {
-            WARNING("Teacher", "Failed to add teacher:");
+            WARNING("Teacher", "Teacher not exist");
         }
+
     }
 
-    private boolean register(TeacherSkills teacherSkills) {
-        return teacherSkillsDAO.add(teacherSkills) > -1;
+    private boolean register(Teacher teacher) {
+        return mBaseDao.update(teacher.getId(), teacher);
     }
 
     public void showTeacherSkills(Teacher teacher) {
-        List<TeacherSkills> teacherSkills = teacherSkillsDAO.readByField("teacherId", String.valueOf(teacher.getId()));
+        List<Teacher> teacherList = mBaseDao.readByField(EntityDao.FIELD_ID, String.valueOf(teacher.getId()));
         showTeacherDetailsShort(teacher);
-        for (TeacherSkills teacherSkill : teacherSkills) {
-            for (Integer skillId : teacherSkill.getSkills()) {
+        for (Teacher teacherItem : teacherList) {
+            for (Integer skillId : teacherItem.getSkills()) {
                 skillController.showSKillsById(skillId);
             }
         }
-        System.out.println("\n");
+        System.out.print("\n");
     }
 
     public void showTeacherSkills(int teacherId) {
@@ -182,11 +183,12 @@ public class TeacherController extends BaseController<Teacher> {
     }
 
     public void showALLTeacherSkills() {
-        List<Teacher> teachers = mBaseDao.readAll();
-        for (Teacher teacher : teachers) {
-            showTeacherSkills(teacher);
-        }
-        if (teachers.isEmpty()) {
+        try {
+            Iterator<Teacher> teachers = mBaseDao.queryAll().iterator();
+            while (teachers.hasNext()) {
+                showTeacherSkills(teachers.next());
+            }
+        } catch (Exception e) {
             WARNING("Teacher", "No Teachers found");
         }
     }
@@ -211,9 +213,7 @@ public class TeacherController extends BaseController<Teacher> {
             } else if ("2".equals(choice)) {
                 USERINPUT("Enter Teacher Name (case-insensitive): ");
                 String name = mScanner.nextLine().trim();
-                List<Teacher> teachers = mBaseDao.readAll().stream()
-                        .filter(t -> t.getName().equalsIgnoreCase(name))
-                        .toList();
+                List<Teacher> teachers = mBaseDao.queryAll().stream().filter(t -> t.getName().equalsIgnoreCase(name)).toList();
                 if (!teachers.isEmpty()) {
                     for (Teacher teacher : teachers) {
                         showTeacherDetailsShort(teacher);
@@ -229,10 +229,4 @@ public class TeacherController extends BaseController<Teacher> {
         }
     }
 
-
-    @Override
-    public void finish() {
-        super.finish();
-        teacherSkillsDAO.writeToFile();
-    }
 }

@@ -5,6 +5,7 @@ import org.softwareeng.group37.model.Entity;
 import org.softwareeng.group37.utils.FileUtils;
 import org.softwareeng.group37.utils.LogUtils;
 
+import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -33,7 +34,7 @@ public class EntityDao<T> extends CSVReadWriter<T> {
     /**
      * Field name representing the unique ID of an entity.
      */
-    final static String FIELD_ID = "id";
+    public final static String FIELD_ID = "id";
 
     /**
      * The filename of the CSV file used to store the entity data.
@@ -99,7 +100,7 @@ public class EntityDao<T> extends CSVReadWriter<T> {
      * @return a list of all entities.
      */
     @Override
-    public List<T> readAll() {
+    protected List<T> readAll() {
         File datafile = new File(mFileName);
         if (!datafile.exists()) {
             try {
@@ -129,7 +130,7 @@ public class EntityDao<T> extends CSVReadWriter<T> {
                         index++;
                     }
                     if (index != -1 && index < values.length) {
-                        setFieldValue(field, entity,values[index]);
+                        setFieldValue(field, entity, values[index]);
                     }
                 }
                 dataMap.put(((Entity) entity).getId(), (T) entity);
@@ -172,6 +173,7 @@ public class EntityDao<T> extends CSVReadWriter<T> {
         }
         return result;
     }
+
     /**
      * Retrieves all entity IDs from the data map.
      *
@@ -233,9 +235,27 @@ public class EntityDao<T> extends CSVReadWriter<T> {
                 output.append(String.format("%d,%d,", e.getId(), e.getStatusAsInt()));
             }
             for (Field field : fields) {
+
                 try {
                     field.setAccessible(true);
-                    output.append(field.get(t)).append(",");
+                    if (field.getType().equals(List.class)) {
+                        List<Object> list = (List<Object>) field.get(t);
+                        if (list != null) {
+                            StringBuilder sb = new StringBuilder();
+                            for (int i = 0; i < list.size(); i++) {
+                                sb.append(String.valueOf(list.get(i)));
+                                if (i != (list.size() - 1)) {
+                                    sb.append("|");
+                                }
+                            }
+                            System.out.println(String.format("writeToFile   %8s   %8s %s", field.getType().getSimpleName(), field.getName(), sb.toString()));
+                            output.append(sb.toString()).append(",");
+                        } else {
+                            output.append("").append(",");
+                        }
+                    } else {
+                        output.append(field.get(t)).append(",");
+                    }
                 } catch (IllegalAccessException e) {
                     output.append(field.getName()).append(",").append("NA");
                     LogUtils.ERROR(getClass().getName(), "Error accessing field: ", e);
@@ -252,7 +272,7 @@ public class EntityDao<T> extends CSVReadWriter<T> {
     }
 
     protected void setFieldValue(Field field, Object entity, String value) throws IllegalAccessException {
-        if(field == null || entity == null ) {
+        if (field == null || entity == null) {
             LogUtils.WARNING(getClass().getSimpleName(), "field or entity is null");
             return;
         }
@@ -268,17 +288,30 @@ public class EntityDao<T> extends CSVReadWriter<T> {
         } else if (field.getType().equals(boolean.class)) {
             field.set(entity, Boolean.parseBoolean(value.trim()));
         } else if (List.class.isAssignableFrom(field.getType())) {
+
             if (field.getType().equals(List.class)) {
+                System.out.println("field.getType().equals(List.class)   " + value);
                 if (field.getType().getTypeName().contains("Integer")) {
+                    System.out.println("contains(\"Integer\")   " + value);
                     List<Integer> listValues = Stream.of(value.split("\\|"))
                             .map(Integer::parseInt)
                             .toList();
                     field.set(entity, listValues);
                 } else {
-                    List<String> listValues = List.of(value.split("\\|"));
-                    field.set(entity, listValues);
+                    System.out.println("contains(============)   " + value);
+                    if (value.isBlank()) {
+                        field.set(entity, new ArrayList<>());
+                    } else {
+                        Iterator<String> listValues = List.of(value.split("\\|")).iterator();
+                        List<Integer> list = new ArrayList<>();
+                        while (listValues.hasNext()) {
+                            list.add(Integer.valueOf(listValues.next().trim()));
+                        }
+                        field.set(entity, list);
+                    }
                 }
             } else {
+                System.out.println("field.getType().!!!!!!!!!!! (List.class)   " + value);
                 field.set(entity, value.trim());
             }
         } else {

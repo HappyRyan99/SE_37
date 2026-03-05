@@ -78,5 +78,5 @@ public abstract class CSVReadWriter<T> {
      *
      * @return a list of all data records
      */
-    abstract List<T> readAll();
+    protected abstract List<T> readAll();
 }

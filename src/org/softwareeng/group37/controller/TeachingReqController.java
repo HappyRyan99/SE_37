@@ -1,37 +1,33 @@
 package org.softwareeng.group37.controller;
 
+import org.softwareeng.group37.dao.EntityDao;
 import org.softwareeng.group37.dao.RequirementsDAO;
 import org.softwareeng.group37.dao.TeacherDAO;
-import org.softwareeng.group37.dao.TeacherSkillsDAO;
 import org.softwareeng.group37.model.Requirement;
 import org.softwareeng.group37.model.Teacher;
-import org.softwareeng.group37.model.TeacherSkills;
+import org.softwareeng.group37.utils.LogUtils;
 
 import java.util.*;
-
-import org.softwareeng.group37.utils.LogUtils;
 
 
 public class TeachingReqController extends BaseController {
 
     TeacherDAO mTeacherDao = null;
-    TeacherSkillsDAO mTeacherSkillsDAO = null;
     TeacherController mTeacherController;
     SkillController mSkillController;
 
     public TeachingReqController() {
         mBaseDao = RequirementsDAO.getInstance();
         mTeacherDao = TeacherDAO.getInstance();
-        mTeacherSkillsDAO = TeacherSkillsDAO.getInstance();
         mTeacherController = new TeacherController();
         mSkillController = new SkillController();
     }
 
     public void showRequirementList() {
-        List<Requirement> requirements = mBaseDao.readAll();
+        List<Requirement> requirements = mBaseDao.queryAll();
         for (Requirement requirement : requirements) {
             showRequirement(requirement);
-            System.out.println("\n");
+            System.out.print("\n");
         }
     }
     public void showRequirement(Requirement requirement) {
@@ -94,11 +90,11 @@ public class TeachingReqController extends BaseController {
     }
     public void assignTeacherToRequirement() {
         LogUtils.INFO("Requirement", "Assign Teacher to Requirement");
-        List<Requirement> requirements = mBaseDao.readAll();
+        List<Requirement> requirements = mBaseDao.queryAll();
         for (Requirement requirement : requirements) {
             if (requirement.getTeacherId() < 1){
                 showRequirement(requirement);
-                System.out.println("\n");
+                System.out.print("\n");
             }
         }
         LogUtils.USERINPUT("Enter Requirement ID: ");
@@ -141,7 +137,7 @@ public class TeachingReqController extends BaseController {
                 LogUtils.WARNING("","Invalid input. Please enter a numeric Teacher ID.");
             }
         }
-        List<TeacherSkills> availableTeacherSkills = mTeacherSkillsDAO.readByField("teacherId", String.valueOf(teacher.getId()));
+        List<Teacher> availableTeacherSkills = mTeacherDao.readByField(EntityDao.FIELD_ID, String.valueOf(teacher.getId()));
         Set<Integer> requiredSkills = new HashSet<>(requirement.getSkills());
         if (!availableTeacherSkills.isEmpty()) {
                 availableTeacherSkills.getFirst().getSkills().forEach(requiredSkills::remove);
@@ -154,7 +150,7 @@ public class TeachingReqController extends BaseController {
                 LogUtils.INFO("Requirement", "Training the teacher on missing skills...");
                 // Logic to train the teacher can be added here
                 availableTeacherSkills.getFirst().getSkills().addAll(requiredSkills);
-                mTeacherSkillsDAO.update(teacher.getId(), availableTeacherSkills.getFirst());
+                mTeacherDao.update(teacher.getId(), availableTeacherSkills.getFirst());
             } else {
                 LogUtils.WARNING("Requirement", "Teacher was not trained. Assignment process aborted.");
                 return;
@@ -168,8 +164,4 @@ public class TeachingReqController extends BaseController {
             LogUtils.WARNING("Requirement", "Teacher assignment failed.");
         }
     }
-    
-    
-
-
 }

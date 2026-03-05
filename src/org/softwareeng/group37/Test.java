@@ -16,7 +16,7 @@ public class Test {
 
     void test1() {
         EntityDao baseDao = new EntityDao<Skills>("skills.csv", Skills.class);
-        List<Skills> all = baseDao.readAll();
+        List<Skills> all = baseDao.queryAll();
         for (Skills skill : all) {
             System.out.print(skill.toString());
         }

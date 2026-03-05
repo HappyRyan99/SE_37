@@ -52,7 +52,7 @@ public class LoginController extends BaseController<User> {
      * @return true if users exist, false otherwise.
      */
     private boolean hasUsers() {
-        List<User> users = mBaseDao.readAll();
+        List<User> users = mBaseDao.queryAll();
         DEBUG("LOGIN", "Number of users: " + users.size());
         return !users.isEmpty();
     }
@@ -110,7 +110,7 @@ public class LoginController extends BaseController<User> {
     }
 
     public void listUsers() {
-        List<User> users = mBaseDao.readAll();
+        List<User> users = mBaseDao.queryAll();
         SUCCESS("Number of users: " + users.size());
         // Using ANSI color codes to enhance the output
         String colorUsername = "\u001B[34m"; // Blue for username

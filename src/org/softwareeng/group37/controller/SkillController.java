@@ -4,6 +4,7 @@ import org.softwareeng.group37.dao.SkillsDAO;
 import org.softwareeng.group37.model.Skills;
 import org.softwareeng.group37.utils.LogUtils;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,23 +38,23 @@ public class SkillController extends BaseController<Skills> {
     }
 
     public void showFullSkillList() {
-        List skills = mBaseDao.readAll();
-        for (Object skill : skills) {
-            showSkillDetails((Skills) skill);
+        List<Skills> skills = mBaseDao.queryAll();
+        for (Skills skill : skills) {
+            showSkillDetails(skill);
         }
     }
 
     public void showSkillList() {
-        List skills = mBaseDao.readAll();
-        for (Object skill : skills) {
-            showSkillShort((Skills) skill);
+        Iterator<Skills> skills = mBaseDao.queryAll().iterator();
+        while (skills.hasNext()) {
+            showSkillShort(skills.next());
         }
     }
 
     public void showSKillsById(int skillId) {
-        Optional skill = mBaseDao.read(skillId);
+        Optional<Skills> skill = mBaseDao.read(skillId);
         if (skill.isPresent()) {
-            showSkillDetails((Skills) skill.get());
+            showSkillDetails(skill.get());
         } else {
             USERINPUT("N/A ");
         }
@@ -61,7 +62,7 @@ public class SkillController extends BaseController<Skills> {
 
     public void showSkillDetails(Skills skill) {
         LogUtils.changeOutputColor("CYAN");
-        System.out.print("ID: ");
+        System.out.print("\n\t Skill ID: ");
         LogUtils.changeOutputColor("GREEN");
         System.out.print(skill.getId());
 
@@ -74,7 +75,7 @@ public class SkillController extends BaseController<Skills> {
         System.out.print("\tDescription: ");
         LogUtils.changeOutputColor("BLUE");
         System.out.print(skill.getDescription());
-        System.out.println("\n");
+        System.out.print("\n");
         LogUtils.resetOutputColor();
     }
 
@@ -88,7 +89,7 @@ public class SkillController extends BaseController<Skills> {
         System.out.print("\tSkill Name: ");
         LogUtils.changeOutputColor("YELLOW");
         System.out.print(skill.getSkillName());
-        System.out.print("\t");
+        System.out.print("\n");
         LogUtils.resetOutputColor();
     }
 

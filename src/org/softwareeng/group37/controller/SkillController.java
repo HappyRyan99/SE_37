@@ -9,7 +9,7 @@ import java.util.Optional;
 
 import static org.softwareeng.group37.utils.LogUtils.*;
 
-public class SkillController extends BaseController {
+public class SkillController extends BaseController<Skills> {
 
     public SkillController() {
         mBaseDao = SkillsDAO.getInstance();

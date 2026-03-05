@@ -1,5 +1,6 @@
 package org.softwareeng.group37.controller;
 
+import org.softwareeng.group37.dao.TeacherDAO;
 import org.softwareeng.group37.dao.TeacherSkillsDAO;
 import org.softwareeng.group37.model.Teacher;
 import org.softwareeng.group37.model.TeacherSkills;
@@ -14,6 +15,10 @@ import static org.softwareeng.group37.utils.LogUtils.*;
 public class TeacherController extends BaseController<Teacher> {
     SkillController skillController = new SkillController();
     TeacherSkillsDAO teacherSkillsDAO = TeacherSkillsDAO.getInstance();
+
+    public TeacherController() {
+        mBaseDao = TeacherDAO.getInstance();
+    }
 
     public void showTeacherList() {
         List<Teacher> teachers = mBaseDao.readAll();
@@ -74,6 +79,15 @@ public class TeacherController extends BaseController<Teacher> {
     }
 
     public void showTeacher(int teacherId) {
+        Optional<Teacher> teacher = mBaseDao.read(teacherId);
+        if (teacher.isPresent()) {
+            showTeacherDetailsShort(teacher.get());
+        } else {
+            WARNING("Teacher", "Teacher not found");
+        }
+    }
+
+    public void showTeacherSHort(int teacherId) {
         Optional<Teacher> teacher = mBaseDao.read(teacherId);
         if (teacher.isPresent()) {
             showTeacherDetailsShort(teacher.get());

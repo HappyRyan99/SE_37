@@ -7,9 +7,9 @@ import org.softwareeng.group37.model.Requirement;
 import org.softwareeng.group37.model.Teacher;
 import org.softwareeng.group37.model.TeacherSkills;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+
+import org.softwareeng.group37.utils.LogUtils;
 
 
 public class TeachingReqController extends BaseController {
@@ -17,53 +17,160 @@ public class TeachingReqController extends BaseController {
     RequirementsDAO mRequirementsDao = RequirementsDAO.getInstance();
     TeacherDAO mTeacherDao = null;
     TeacherSkillsDAO mTeacherSkillsDAO = null;
-    ;
+    TeacherController mTeacherController;
+    SkillController mSkillController;
 
     public TeachingReqController() {
         mBaseDao = RequirementsDAO.getInstance();
         mTeacherDao = TeacherDAO.getInstance();
         mTeacherSkillsDAO = TeacherSkillsDAO.getInstance();
+        mTeacherController = new TeacherController();
+        mSkillController = new SkillController();
     }
 
+    public void showRequirementList() {
+        List<Requirement> requirements = mBaseDao.readAll();
+        for (Requirement requirement : requirements) {
+            showRequirement(requirement);
+            System.out.println("\n");
+        }
+    }
+    public void showRequirement(Requirement requirement) {
+        LogUtils.changeOutputColor("CYAN");
+        System.out.print("ID: ");
+        LogUtils.changeOutputColor("GREEN");
+        System.out.print(requirement.getId());
 
-    private void createATeachingRequest(String name, int skillId, List<Teacher> teachers) {
+        LogUtils.changeOutputColor("CYAN");
+        System.out.print("\tName: ");
+        LogUtils.changeOutputColor("YELLOW");
+        System.out.print(requirement.getRequirementName());
+
+        if (requirement.getTeacherId() > 0){
+            LogUtils.changeOutputColor("PURPLE");
+            System.out.print("\tName: ");
+            mTeacherController.showTeacherSHort(requirement.getTeacherId());
+        }
+
+        LogUtils.changeOutputColor("CYAN");
+        System.out.print("\tStatus: ");
+        if (requirement.getTeacherId()> 0){
+            LogUtils.changeOutputColor("GREEN");
+            System.out.print("Assigned");
+        }
+        else{
+            LogUtils.changeOutputColor("YELLOW");
+            System.out.print("Not Assigned");
+        }
+
+        for (Integer skillId : requirement.getSkills()){
+            mSkillController.showSKillsById(skillId);
+        }
+        System.out.println("\t");
+
+        LogUtils.resetOutputColor();
+    }
+    public void createRequirement() {
+        LogUtils.INFO("Requirement", "Create New Teaching Requirement");
+        LogUtils.USERINPUT("Enter Requirement Name: ");
+        String requirementName = mScanner.nextLine();
+        mSkillController.showSkillList();
+        LogUtils.USERINPUT("\nEnter Skill IDs (space separated, e.g., 1 2 3): ");
+        String[] skillIdsInput = mScanner.nextLine().split(" ");
+        List<Integer> skillIds = new ArrayList<>();
+        for (String skillId : skillIdsInput) {
+            skillIds.add(Integer.parseInt(skillId.trim()));
+        }
         Requirement requirement = new Requirement();
         requirement.setId(mBaseDao.getANewId());
-        requirement.setStatus(0);
-        requirement.setSkillId(skillId);
-        requirement.setTeachers(teachers);
-        requirement.setRequirementName(name);
+        requirement.setRequirementName(requirementName);
+        requirement.setSkills(skillIds);
         mBaseDao.add(requirement);
-    }
 
-    private void showAllReqList() {
-        Iterator<Requirement> allReq = mBaseDao.queryAll().iterator();
-        while (allReq.hasNext()) {
-            Requirement req = allReq.next();
-            System.out.println(req);
+        LogUtils.USERINPUT("Do you want to assign a teacher to this requirement? (y/n): ");
+        String assignChoice = mScanner.nextLine();
+        if (assignChoice.equalsIgnoreCase("y")) {
+            assignTeacherToRequirement(requirement);
         }
     }
-
-    private void showReqirementDetail(int id) {
-        Optional<Requirement> optional = mBaseDao.read(id);
-        optional.ifPresent(req -> {
-            System.out.println(req);
-        });
-    }
-
-    private int showSkillAvailableTeacher(int skillId) {
-        List<TeacherSkills> availableTeacher = mTeacherSkillsDAO.readByField("skills", String.valueOf(skillId));
-        if (availableTeacher.isEmpty()) {
-            // TODO: 2026/3/4 get into recruit process
-            return -1;
-        } else {
-            // TODO: 2026/3/4 choose one teacher
-            for (TeacherSkills teacherSkills : availableTeacher) {
-                System.out.println("teacherId: " + teacherSkills.getTeacherId());
+    public void assignTeacherToRequirement() {
+        LogUtils.INFO("Requirement", "Assign Teacher to Requirement");
+        List<Requirement> requirements = mBaseDao.readAll();
+        for (Requirement requirement : requirements) {
+            if (requirement.getTeacherId() < 1){
+                showRequirement(requirement);
+                System.out.println("\n");
             }
-            return 1;
+        }
+        LogUtils.USERINPUT("Enter Requirement ID: ");
+        Optional<Requirement> requirementOP = null;
+        while (true){
+            int requirementId;
+            try {
+                requirementId = Integer.parseInt(mScanner.nextLine());
+                requirementOP = mBaseDao.read(requirementId);
+                break;
+            } catch (NumberFormatException e) {
+                LogUtils.WARNING("Requirement", "Invalid ID format. Please enter a numeric ID.");
+            }
+        }
+        if (requirementOP.isPresent()) {
+            Requirement requirement = requirementOP.get();
+            assignTeacherToRequirement(requirement);
+        } else {
+            LogUtils.WARNING("Requirement", "Requirement not found.");
         }
     }
+
+    private void assignTeacherToRequirement(Requirement requirement) {
+        LogUtils.INFO("Requirement", "Assign Teacher to Requirement: "+requirement.getRequirementName());
+        mTeacherController.showTeacherDetailsShort();
+        LogUtils.USERINPUT("Please enter the ID of the teacher you want to assign:");
+        Teacher teacher =null;
+        while (true) {
+            try {
+                int teacherId = Integer.parseInt(mScanner.nextLine());
+                Optional<Teacher> teacherOP = mTeacherDao.read(teacherId);
+
+                if (teacherOP.isPresent()) {
+                    teacher = teacherOP.get();
+                    break;
+                } else {
+                    LogUtils.WARNING("","Invalid Teacher ID. Please try again.");
+                }
+            } catch (NumberFormatException e) {
+                LogUtils.WARNING("","Invalid input. Please enter a numeric Teacher ID.");
+            }
+        }
+        List<TeacherSkills> availableTeacherSkills = mTeacherSkillsDAO.readByField("teacherId", String.valueOf(teacher.getId()));
+        Set<Integer> requiredSkills = new HashSet<>(requirement.getSkills());
+        if (!availableTeacherSkills.isEmpty()) {
+                availableTeacherSkills.getFirst().getSkills().forEach(requiredSkills::remove);
+        }
+        if (!requiredSkills.isEmpty()) {
+            LogUtils.WARNING("Requirement", "The selected teacher is missing the following required skills: " + requiredSkills);
+            LogUtils.USERINPUT("Do you want to train the teacher to gain these skills? (y/n): ");
+            String trainChoice = mScanner.nextLine();
+            if (trainChoice.equalsIgnoreCase("y")) {
+                LogUtils.INFO("Requirement", "Training the teacher on missing skills...");
+                // Logic to train the teacher can be added here
+                availableTeacherSkills.getFirst().getSkills().addAll(requiredSkills);
+                mTeacherSkillsDAO.update(teacher.getId(), availableTeacherSkills.getFirst());
+            } else {
+                LogUtils.WARNING("Requirement", "Teacher was not trained. Assignment process aborted.");
+                return;
+            }
+        }
+        
+        requirement.setTeacherId(teacher.getId());
+        if ( mBaseDao.update(requirement.getId(), requirement)){
+            LogUtils.WARNING("Requirement", "Teacher assigned successfully.");
+        }else{
+            LogUtils.WARNING("Requirement", "Teacher assignment failed.");
+        }
+    }
+    
+    
 
 
 }

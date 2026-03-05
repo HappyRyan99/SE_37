@@ -5,7 +5,7 @@ import java.util.List;
 public class TeacherSkills extends Entity{
     int teacherId;
     List<Integer> skills;
-
+//todo list reading is failing please fix
     public List<Integer> getSkills() {
         return skills;
     }

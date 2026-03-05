@@ -5,10 +5,45 @@ import java.util.List;
 public class Requirement extends Entity{
 
     private String requirementName;
-    private int skillId;
-    private List<Teacher>  teachers;
-    private long createDate;
+    private int teacherId =0;
+    private List<Integer>  skills;
+    private String createDate;
 
+
+    @Override
+    public String toWrite() {
+        if (getId() == -1) {
+            return "id,status,requirementName,teacherId,skillIds";
+        }
+        StringBuffer sb = new StringBuffer();
+        sb.append(getId()).append(",");
+        sb.append(getStatus()).append(",");
+        sb.append(requirementName).append(",");
+        sb.append(teacherId).append(",");
+        for (Integer skill : skills) {
+            sb.append(skill).append("|");
+        }
+        if (sb.toString().endsWith("|")) {
+            sb.deleteCharAt(sb.length() - 1);
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("TeacherSkills: ").append(getId()).append(" ")
+                .append(getStatus()).append(" ")
+                .append(requirementName).append(" ")
+                .append(teacherId).append(" ");
+        for (Integer skill : skills) {
+            sb.append(skill).append(",");
+        }
+        if (sb.toString().endsWith(",")) {
+            sb.deleteCharAt(sb.length() - 1);
+        }
+        return sb.toString();
+    }
 
     public String getRequirementName() {
         return requirementName;
@@ -18,27 +53,27 @@ public class Requirement extends Entity{
         this.requirementName = requirementName;
     }
 
-    public List<Teacher> getTeachers() {
-        return teachers;
+    public int getTeacherId() {
+        return teacherId;
     }
 
-    public void setTeachers(List<Teacher> teachers) {
-        this.teachers = teachers;
+    public void setTeacherId(int teacherId) {
+        this.teacherId = teacherId;
     }
 
-    public long getCreateDate() {
+    public List<Integer> getSkills() {
+        return skills;
+    }
+
+    public void setSkills(List<Integer> skills) {
+        this.skills = skills;
+    }
+
+    public String getCreateDate() {
         return createDate;
     }
 
-    public void setCreateDate(long createDate) {
+    public void setCreateDate(String createDate) {
         this.createDate = createDate;
-    }
-
-    public int getSkillId() {
-        return skillId;
-    }
-
-    public void setSkillId(int skillId) {
-        this.skillId = skillId;
     }
 }

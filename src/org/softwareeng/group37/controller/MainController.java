@@ -28,10 +28,12 @@ public class MainController {
         LoginController loginController = new LoginController();
         TeacherController teacherController = new TeacherController();
         SkillController skillController = new SkillController();
+        TeachingReqController teachingReqController = new TeachingReqController();
 
         controllers.add(loginController);
         controllers.add(teacherController);
         controllers.add(skillController);
+        controllers.add(teachingReqController);
 
         // Change the output color to green for the welcome message
         LogUtils.changeOutputColor("GREEN");
@@ -55,16 +57,21 @@ public class MainController {
             MENU(" 1. REGISTER NEW USER\t");
             MENU(" 2. LIST USERS\t");
             MENU("\n");
-            MENU("==== TEACHER MENU===\n ");
+            MENU("==== TEACHER MENU ===\n ");
             MENU(" 3. REGISTER NEW TEACHER\t");
             MENU(" 4. LIST TEACHERS\t");
             MENU(" 5. QUERY TEACHER\t");
             MENU(" 6. TRAIN TEACHER\t");
             MENU(" 7. SHOW TEACHER SKILLS\t");
             MENU("\n");
-            MENU("==== Skills MENU===\n ");
+            MENU("==== Skills MENU ===\n ");
             MENU(" 8. Add new Skill\t");
             MENU(" 9. Show all Skills\t");
+            MENU("\n");
+            MENU("==== Teaching Requirement MENU ===\n ");
+            MENU(" 10. Add new Requirement\t");
+            MENU(" 11. Fulfill Requirement\t");
+            MENU(" 12. Show all Requirements\t");
             MENU("\n");
             MENU("==================== QUIT =================================================\n");
             MENU("-1. LOGOUT\t");
@@ -114,6 +121,14 @@ public class MainController {
                 case 9:
                     skillController.showFullSkillList();
                     break;
+                case 10:
+                    teachingReqController.createRequirement();
+                    break;
+                case 11:
+                    teachingReqController.assignTeacherToRequirement();
+                    break;
+                case 12:
+                    teachingReqController.showRequirementList();
                 case -1: // Case for logging out and returning to the login prompt
                     INFO("APP", "Logging out...");
                     while (true) {

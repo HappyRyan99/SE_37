@@ -1,16 +1,16 @@
 package org.softwareeng.group37.dao;
 
-import org.softwareeng.group37.model.Teacher;
+import org.softwareeng.group37.model.Skills;
 
-public class SkillsDAO extends EntityDao<Teacher> {
+public class SkillsDAO extends EntityDao<Skills> {
     private final static String SKILLS_FILE = "skills.csv";
 
     private SkillsDAO() {
-        super(SKILLS_FILE, Teacher.class);
+        super(SKILLS_FILE, Skills.class);
     }
 
     private SkillsDAO(String fileName) {
-        super(fileName, Teacher.class);
+        super(fileName, Skills.class);
     }
 
     private static SkillsDAO mSkillDao;

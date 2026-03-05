@@ -136,7 +136,7 @@ public class EntityDao<T> extends CSVReadWriter<T> {
                 dataMap.put(((Entity) entity).getId(), (T) entity);
             }
             if (dataMap.isEmpty() && !hasHeader) {
-                System.out.println("No Entity found in the database. initializing data...");
+                LogUtils.DEBUG("EntityDao","No Entity found in the database. initializing data...");
             }
             return dataMap.values().stream().toList();
         } catch (Exception e) {
@@ -289,15 +289,10 @@ public class EntityDao<T> extends CSVReadWriter<T> {
         } else if (List.class.isAssignableFrom(field.getType())) {
 
             if (field.getType().equals(List.class)) {
-                System.out.println("field.getType().equals(List.class)   " + value);
                 if (field.getType().getTypeName().contains("Integer")) {
-                    System.out.println("contains(\"Integer\")   " + value);
-                    List<Integer> listValues = Stream.of(value.split("\\|"))
-                            .map(Integer::parseInt)
-                            .toList();
+                    List<Integer> listValues = Stream.of(value.split("\\|")).map(Integer::parseInt).toList();
                     field.set(entity, listValues);
                 } else {
-                    System.out.println("contains(============)   " + value);
                     if (value.isBlank()) {
                         field.set(entity, new ArrayList<>());
                     } else {
@@ -310,7 +305,6 @@ public class EntityDao<T> extends CSVReadWriter<T> {
                     }
                 }
             } else {
-                System.out.println("field.getType().!!!!!!!!!!! (List.class)   " + value);
                 field.set(entity, value.trim());
             }
         } else {

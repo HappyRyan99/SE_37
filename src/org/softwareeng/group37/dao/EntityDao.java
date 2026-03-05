@@ -248,7 +248,6 @@ public class EntityDao<T> extends CSVReadWriter<T> {
                                     sb.append("|");
                                 }
                             }
-                            System.out.println(String.format("writeToFile   %8s   %8s %s", field.getType().getSimpleName(), field.getName(), sb.toString()));
                             output.append(sb.toString()).append(",");
                         } else {
                             output.append("").append(",");

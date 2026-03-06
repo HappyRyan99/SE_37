@@ -12,7 +12,7 @@ public class BaseController<T> {
 
     public void finish() {
         if (mBaseDao != null) {
-            mBaseDao.writeToFile();
+            mBaseDao.flush();
         }
         mBaseDao = null;
     }

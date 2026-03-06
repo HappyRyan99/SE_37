@@ -27,7 +27,9 @@ public class TeachingReqController extends BaseController {
         List<Requirement> requirements = mBaseDao.queryAll();
         for (Requirement requirement : requirements) {
             showRequirement(requirement);
-            System.out.print("\n");
+            LogUtils.changeOutputColor("BLUE");
+            System.out.print("---------------------------------------------------------------------------------------\n");
+            LogUtils.resetOutputColor();
         }
     }
     public void showRequirement(Requirement requirement) {

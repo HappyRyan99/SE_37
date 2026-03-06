@@ -2,6 +2,7 @@ package org.softwareeng.group37.controller;
 
 import org.softwareeng.group37.dao.EntityDao;
 import org.softwareeng.group37.dao.TeacherDAO;
+import org.softwareeng.group37.model.Skills;
 import org.softwareeng.group37.model.Teacher;
 import org.softwareeng.group37.utils.DateUtils;
 import org.softwareeng.group37.utils.LogUtils;
@@ -137,8 +138,8 @@ public class TeacherController extends BaseController<Teacher> {
                     System.out.println("Invalid input. Please enter valid skill IDs separated by spaces.");
                 }
             }
-            if (teacher.getSkills().size() > 0) {
-                ArrayList newSkills = new ArrayList(selectedSkillIds);
+            if (teacher.getSkills() !=null && !teacher.getSkills().isEmpty()) {
+                List<Integer> newSkills = new ArrayList(selectedSkillIds);
                 newSkills.addAll(teacher.getSkills());
 
                 Set<Integer> set = new HashSet<>(newSkills);
@@ -187,6 +188,9 @@ public class TeacherController extends BaseController<Teacher> {
             Iterator<Teacher> teachers = mBaseDao.queryAll().iterator();
             while (teachers.hasNext()) {
                 showTeacherSkills(teachers.next());
+                LogUtils.changeOutputColor("BLUE");
+                System.out.print("----------------------------------------\n");
+                LogUtils.resetOutputColor();
             }
         } catch (Exception e) {
             WARNING("Teacher", "No Teachers found");

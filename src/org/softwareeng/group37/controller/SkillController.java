@@ -75,7 +75,6 @@ public class SkillController extends BaseController<Skills> {
         System.out.print("\tDescription: ");
         LogUtils.changeOutputColor("BLUE");
         System.out.print(skill.getDescription());
-        System.out.print("\n");
         LogUtils.resetOutputColor();
     }
 
@@ -89,7 +88,6 @@ public class SkillController extends BaseController<Skills> {
         System.out.print("\tSkill Name: ");
         LogUtils.changeOutputColor("YELLOW");
         System.out.print(skill.getSkillName());
-        System.out.print("\n");
         LogUtils.resetOutputColor();
     }
 

@@ -31,15 +31,18 @@ public class Requirement extends Entity{
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("TeacherSkills: ").append(getId()).append(" ")
-                .append(getStatus()).append(" ")
-                .append(requirementName).append(" ")
-                .append(teacherId).append(" ");
-        for (Integer skill : skills) {
-            sb.append(skill).append(",");
+        if (getId() == -1) {
+            return "id,status,requirementName,teacherId,skillIds";
         }
-        if (sb.toString().endsWith(",")) {
+        StringBuffer sb = new StringBuffer();
+        sb.append(getId()).append(",");
+        sb.append(getStatus()).append(",");
+        sb.append(requirementName).append(",");
+        sb.append(teacherId).append(",");
+        for (Integer skill : skills) {
+            sb.append(skill).append("|");
+        }
+        if (sb.toString().endsWith("|")) {
             sb.deleteCharAt(sb.length() - 1);
         }
         return sb.toString();

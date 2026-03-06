@@ -129,6 +129,7 @@ public class MainController {
                     break;
                 case 12:
                     teachingReqController.showRequirementList();
+                    break;
                 case -1: // Case for logging out and returning to the login prompt
                     INFO("APP", "Logging out...");
                     while (true) {

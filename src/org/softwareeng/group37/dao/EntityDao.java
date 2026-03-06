@@ -199,6 +199,7 @@ public class EntityDao<T> extends CSVReadWriter<T> {
     public int add(T t) {
         int id = getANewId();
         dataMap.put(getANewId(), t);
+        writeToFile();
         return id;
     }
 
@@ -209,6 +210,7 @@ public class EntityDao<T> extends CSVReadWriter<T> {
 
     public boolean update(int id, T t) {
         dataMap.put(Integer.valueOf(id), t);
+        writeToFile();
         return true;
     }
 

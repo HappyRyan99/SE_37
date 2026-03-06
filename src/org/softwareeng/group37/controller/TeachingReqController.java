@@ -71,11 +71,20 @@ public class TeachingReqController extends BaseController {
         String requirementName = mScanner.nextLine();
         mSkillController.showSkillList();
         LogUtils.USERINPUT("\nEnter Skill IDs (space separated, e.g., 1 2 3): ");
-        String[] skillIdsInput = mScanner.nextLine().split(" ");
-        List<Integer> skillIds = new ArrayList<>();
-        for (String skillId : skillIdsInput) {
-            skillIds.add(Integer.parseInt(skillId.trim()));
+        List<Integer> skillIds;
+        while (true) {
+            try {
+                String[] skillIdsInput = mScanner.nextLine().split(" ");
+                skillIds = new ArrayList<>();
+                for (String skillId : skillIdsInput) {
+                    skillIds.add(Integer.parseInt(skillId.trim()));
+                }
+                break;
+            } catch (NumberFormatException e) {
+                LogUtils.WARNING("Requirement", "Invalid input. Please enter valid skill IDs.");
+            }
         }
+
         Requirement requirement = new Requirement();
         requirement.setId(mBaseDao.getANewId());
         requirement.setRequirementName(requirementName);
@@ -120,7 +129,7 @@ public class TeachingReqController extends BaseController {
     private void assignTeacherToRequirement(Requirement requirement) {
         LogUtils.INFO("Requirement", "Assign Teacher to Requirement: "+requirement.getRequirementName());
         mTeacherController.showTeacherDetailsShort();
-        LogUtils.USERINPUT("Please enter the ID of the teacher you want to assign:");
+        LogUtils.USERINPUT("\nPlease enter the ID of the teacher you want to assign:");
         Teacher teacher =null;
         while (true) {
             try {

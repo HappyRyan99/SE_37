@@ -7,11 +7,11 @@ public class RequirementsDAO extends EntityDao<Requirement> {
     public final static String REQUIREMENT_FILE = "requirement.csv";
 
     private RequirementsDAO() {
-        super(REQUIREMENT_FILE, Teacher.class);
+        super(REQUIREMENT_FILE, Requirement.class);
     }
 
     private RequirementsDAO(String fileName) {
-        super(fileName, Teacher.class);
+        super(fileName, Requirement.class);
     }
 
     private static RequirementsDAO mRequirementDao;

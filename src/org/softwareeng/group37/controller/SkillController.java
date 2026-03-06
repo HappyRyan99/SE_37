@@ -16,11 +16,6 @@ public class SkillController extends BaseController<Skills> {
         mBaseDao = SkillsDAO.getInstance();
     }
 
-    public static void main(String[] args) {
-        SkillController skillController = new SkillController();
-        skillController.addSkill();
-        skillController.showSkillList();
-    }
 
     public void addSkill() {
         Skills newSkill = new Skills();

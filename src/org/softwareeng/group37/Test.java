@@ -43,6 +43,6 @@ public class Test {
         } else {
         }
         System.out.println("===================Write====================");
-        baseDao.writeToFile();
+        baseDao.flush();
     }
 }

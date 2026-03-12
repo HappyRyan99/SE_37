@@ -16,6 +16,7 @@ public class SkillController extends BaseController<Skills> {
         mBaseDao = SkillsDAO.getInstance();
     }
 
+
     public void addSkill() {
         Skills newSkill = new Skills();
         INFO("Skill", "Add New Skill");
@@ -69,6 +70,7 @@ public class SkillController extends BaseController<Skills> {
         System.out.print("\tDescription: ");
         LogUtils.changeOutputColor("BLUE");
         System.out.print(skill.getDescription());
+        System.out.print("\t");
         LogUtils.resetOutputColor();
     }
 
@@ -82,6 +84,7 @@ public class SkillController extends BaseController<Skills> {
         System.out.print("\tSkill Name: ");
         LogUtils.changeOutputColor("YELLOW");
         System.out.print(skill.getSkillName());
+        System.out.print("\t");
         LogUtils.resetOutputColor();
     }
 

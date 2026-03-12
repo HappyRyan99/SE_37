@@ -5,17 +5,12 @@ import org.softwareeng.group37.model.Entity;
 import org.softwareeng.group37.utils.FileUtils;
 import org.softwareeng.group37.utils.LogUtils;
 
-import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Stream;
 
 /**
@@ -24,7 +19,7 @@ import java.util.stream.Stream;
  *
  * @param <T> the type of entity this DAO manages.
  */
-public class EntityDao<T> extends CSVReadWriter<T> {
+public class EntityDao<T> implements GenericDataStore<T> {
 
     /**
      * Default filename for storing user entities.
@@ -40,6 +35,21 @@ public class EntityDao<T> extends CSVReadWriter<T> {
      * The filename of the CSV file used to store the entity data.
      */
     String mFileName;
+    /**
+     * A map to store entities indexed by their unique identifiers.
+     */
+    protected Map<Integer, T> dataMap = new HashMap<Integer, T>();
+
+    /**
+     * The class type of the generic entity being handled.
+     */
+    protected final Class<?> mType;
+
+    /**
+     * A list of fields (including inherited fields) for the provided class type.
+     * These fields are used to dynamically process the entity's data.
+     */
+    protected final List<Field> mFields;
 
     /**
      * Constructor that initializes EntityDao with a specific filename and entity type.
@@ -49,8 +59,11 @@ public class EntityDao<T> extends CSVReadWriter<T> {
      * @param type     the Class object representing the type of entity managed by this DAO.
      */
     public EntityDao(String filename, Class<?> type) {
-        super(type);
+
         mFileName = filename.isBlank() ? FILENAME_USER : filename;
+        this.mType = type;
+        this.mFields = new ArrayList<>();
+        setFields();
         this.readAll(); // Load existing data from the CSV file upon initialization.
     }
 
@@ -61,7 +74,22 @@ public class EntityDao<T> extends CSVReadWriter<T> {
      * @param type the Class object representing the type of entity managed by this DAO.
      */
     public EntityDao(Class<?> type) {
-        super(type);
+        mFields = new ArrayList<>();
+        this.mType = type;
+        setFields();
+        readAll();
+    }
+
+    /**
+     * Dynamically retrieves and stores all fields (including inherited ones)
+     * of the provided class type and its superclasses for later use.
+     */
+    private   void setFields() {
+        Class<?> current = mType;
+        while (current != null && current != Object.class) {
+            Collections.addAll(mFields, current.getDeclaredFields());
+            current = current.getSuperclass();
+        }
     }
 
     /**
@@ -100,7 +128,7 @@ public class EntityDao<T> extends CSVReadWriter<T> {
      * @return a list of all entities.
      */
     @Override
-    protected List<T> readAll() {
+    public List<T> readAll() {
         File datafile = new File(mFileName);
         if (!datafile.exists()) {
             try {
@@ -196,17 +224,18 @@ public class EntityDao<T> extends CSVReadWriter<T> {
         }
     }
 
+    @Override
     public int add(T t) {
         int id = getANewId();
         dataMap.put(getANewId(), t);
         return id;
     }
-
+    @Override
     public boolean delete(T t) {
         dataMap.remove(t);
         return true;
     }
-
+    @Override
     public boolean update(int id, T t) {
         dataMap.put(Integer.valueOf(id), t);
         return true;
@@ -216,14 +245,15 @@ public class EntityDao<T> extends CSVReadWriter<T> {
         return dataMap.values().stream().toList();
     }
 
-    public boolean writeToFile() {
+    @Override
+    public void flush() {
         StringBuilder stringBuilder = new StringBuilder();
         Iterator<T> iterator = dataMap.values().iterator();
         try {
             T title = (T) mType.getDeclaredConstructor().newInstance();
             stringBuilder.append(((Entity) title).getHeader());
         } catch (Exception e) {
-            return false;
+            return;
         }
 
         while (iterator.hasNext()) {
@@ -267,7 +297,6 @@ public class EntityDao<T> extends CSVReadWriter<T> {
             stringBuilder.append(output.toString());
         }
         FileUtils.fileWriteString(mFileName, stringBuilder.toString());
-        return true;
     }
 
     protected void setFieldValue(Field field, Object entity, String value) throws IllegalAccessException {
